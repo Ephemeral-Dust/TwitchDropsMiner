@@ -227,6 +227,7 @@ default_translation: Translation = {
         "goes_online": "{channel} goes ONLINE, switching...",
         "goes_offline": "{channel} goes OFFLINE, switching...",
         "claimed_drop": "Claimed drop: {drop}",
+        "ready_to_claim": "Drop ready to claim: {drop}",
         "no_channel": "No available channels to watch. Waiting for an ONLINE channel...",
         "no_campaign": "No active campaigns to mine drops for. Waiting for an active campaign...",
     },
@@ -347,6 +348,7 @@ default_translation: Translation = {
                 "expired": "Expired ❌",
                 "claimed": "Claimed ✔",
                 "ready_to_claim": "Ready to claim ⏳",
+                "claim_button": "Claim",
             },
             "starts": "Starts: {time}",
             "ends": "Ends: {time}",
@@ -365,6 +367,7 @@ default_translation: Translation = {
                 "dark_mode": "Dark mode: ",
                 "priority_mode": "Priority mode: ",
                 "proxy": "Proxy (requires restart):",
+                "auto_claim_drop": "Auto claim drops: ",
             },
             "priority_modes": {
                 "priority_only": "Priority list only",
@@ -399,19 +402,19 @@ default_translation: Translation = {
                 "2. Ensure your Twitch account is linked to all campaigns "
                 "you're interested in mining.\n"
                 "3. If you're interested in mining everything possible, "
-                "change the Priority Mode to anything other than \"Priority list only\" "
-                "and press on \"Reload\".\n"
-                "4. If you want to mine specific games first, use the \"Priority\" list "
+                'change the Priority Mode to anything other than "Priority list only" '
+                'and press on "Reload".\n'
+                '4. If you want to mine specific games first, use the "Priority" list '
                 "to set up an ordered list of games of your choice. "
                 "Games from the top of the list will be attempted to be mined first, "
                 "before the ones lower down the list.\n"
-                "5. Keep the \"Priority mode\" selected as \"Priority list only\", "
+                '5. Keep the "Priority mode" selected as "Priority list only", '
                 "to avoid mining games that are not on the priority list. "
                 "Or not - it's up to you.\n"
-                "6. Use the \"Exclude\" list to tell the application "
+                '6. Use the "Exclude" list to tell the application '
                 "which games should never be mined.\n"
                 "7. Changing the contents of either of the lists, or changing "
-                "the \"Priority mode\", requires you to press on \"Reload\" "
+                'the "Priority mode", requires you to press on "Reload" '
                 "for the changes to take an effect."
             ),
         },

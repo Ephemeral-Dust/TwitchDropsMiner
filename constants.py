@@ -20,7 +20,9 @@ if TYPE_CHECKING:
 
 
 # True if we're running from a built EXE (or a Linux AppImage), False inside a dev build
-IS_APPIMAGE = "APPIMAGE" in os.environ and os.path.exists(os.environ["APPIMAGE"])
+IS_APPIMAGE = "APPIMAGE" in os.environ and os.path.exists(
+    os.environ["APPIMAGE"]
+)
 IS_PACKAGED = hasattr(sys, "_MEIPASS") or IS_APPIMAGE
 # logging special levels
 CALL: int = logging.INFO - 1
@@ -32,7 +34,9 @@ else:
     # On Linux, the site-packages path includes a versioned 'pythonX.Y' folder part
     # The Lib folder is also spelled in lowercase: 'lib'
     version_info = sys.version_info
-    SYS_SITE_PACKAGES = f"lib/python{version_info.major}.{version_info.minor}/site-packages"
+    SYS_SITE_PACKAGES = (
+        f"lib/python{version_info.major}.{version_info.minor}/site-packages"
+    )
 # scripts venv path changes depending on the system platform
 if sys.platform == "win32":
     SYS_SCRIPTS = "Scripts"
@@ -116,7 +120,7 @@ MAX_INT = sys.maxsize
 MAX_EXTRA_MINUTES = 15
 BASE_TOPICS = 2
 MAX_WEBSOCKETS = 8
-WS_TOPICS_LIMIT = 50
+WS_TOPICS_LIMIT = 25  # Reduced from 50 due to Twitch websocket 1009 errors
 TOPICS_PER_CHANNEL = 2
 MAX_TOPICS = (MAX_WEBSOCKETS * WS_TOPICS_LIMIT) - BASE_TOPICS
 MAX_CHANNELS = MAX_TOPICS // TOPICS_PER_CHANNEL
@@ -139,14 +143,18 @@ LOGGING_LEVELS = {
 }
 FILE_FORMATTER = logging.Formatter(
     "{asctime}.{msecs:03.0f}:\t{levelname:>7}:\t{message}",
-    style='{',
+    style="{",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-OUTPUT_FORMATTER = logging.Formatter("{levelname}: {message}", style='{', datefmt="%H:%M:%S")
+OUTPUT_FORMATTER = logging.Formatter(
+    "{levelname}: {message}", style="{", datefmt="%H:%M:%S"
+)
 
 
 class ClientInfo:
-    def __init__(self, client_url: URL, client_id: str, user_agents: str | list[str]) -> None:
+    def __init__(
+        self, client_url: URL, client_id: str, user_agents: str | list[str]
+    ) -> None:
         self.CLIENT_URL: URL = client_url
         self.CLIENT_ID: str = client_id
         self.USER_AGENT: str
@@ -202,7 +210,7 @@ class ClientType:
                 "Mozilla/5.0 (Linux; Android 16; LM-X420) AppleWebKit/537.36 "
                 "(KHTML, like Gecko) Chrome/138.0.7204.158 Mobile Safari/537.36"
             ),
-        ]
+        ],
     )
     ANDROID_APP = ClientInfo(
         URL("https://www.twitch.tv"),
@@ -236,7 +244,7 @@ class ClientType:
                 "Dalvik/2.1.0 (Linux; U; Android 14; SM-X306B Build/UP1A.231005.007) "
                 "tv.twitch.android.app/25.3.0/2503006"
             ),
-        ]
+        ],
     )
     SMARTBOX = ClientInfo(
         URL("https://android.tv.twitch.tv"),
@@ -265,7 +273,9 @@ class PriorityMode(Enum):
 
 
 class GQLOperation(JsonType):
-    def __init__(self, name: str, sha256: str, *, variables: JsonType | None = None):
+    def __init__(
+        self, name: str, sha256: str, *, variables: JsonType | None = None
+    ):
         super().__init__(
             operationName=name,
             extensions={
@@ -273,7 +283,7 @@ class GQLOperation(JsonType):
                     "version": 1,
                     "sha256Hash": sha256,
                 }
-            }
+            },
         )
         if variables is not None:
             self.__setitem__("variables", variables)
@@ -332,7 +342,7 @@ GQL_OPERATIONS: dict[str, GQLOperation] = {
         "d86775d0ef16a63a33ad52e80eaff963b2d5b72fada7c991504a57496e1d8e4b",
         variables={
             "fetchRewardCampaigns": False,
-        }
+        },
     ),
     # returns current state of drops (current drop progress)
     "CurrentDrop": GQLOperation(
@@ -349,7 +359,7 @@ GQL_OPERATIONS: dict[str, GQLOperation] = {
         "5a4da2ab3d5b47c9f9ce864e727b2cb346af1e3ea8b897fe8f704a97ff017619",
         variables={
             "fetchRewardCampaigns": False,
-        }
+        },
     ),
     # returns extended information about a particular campaign
     "CampaignDetails": GQLOperation(
@@ -456,7 +466,10 @@ class WebsocketTopic:
 
     @classmethod
     def as_str(
-        cls, category: Literal["User", "Channel"], topic_name: str, target_id: int
+        cls,
+        category: Literal["User", "Channel"],
+        topic_name: str,
+        target_id: int,
     ) -> str:
         return f"{WEBSOCKET_TOPICS[category][topic_name]}.{target_id}"
 

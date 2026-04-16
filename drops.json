@@ -1,0 +1,942 @@
+{
+  "generated_at": "2026-04-16 14:58:55 Mountain Daylight Time",
+  "total_campaigns": 104,
+  "campaigns": [
+    {
+      "id": "5bece554-0a92-4c5b-8a35-050a9c6115d5",
+      "name": "April Drops",
+      "status": "ACTIVE",
+      "game": "The Quinfall",
+      "starts_at": "2026-04-15 15:01 Mountain Daylight Time",
+      "ends_at": "2026-04-16 14:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "8fa8613a-3a6e-498e-add5-a3cf3a9f2bd5",
+      "name": "S&F Droplets",
+      "status": "ACTIVE",
+      "game": "Shakes and Fidget",
+      "starts_at": "2026-04-10 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-16 15:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "8c8b9bd3-42bf-404a-822d-9b6b58fa7d13",
+      "name": "Astronomer",
+      "status": "ACTIVE",
+      "game": "Galaxies Showcase",
+      "starts_at": "2026-04-16 13:00 Mountain Daylight Time",
+      "ends_at": "2026-04-16 15:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "0893a622-a36b-4794-9c06-4f0f0bea25b2",
+      "name": "Prime Time #479",
+      "status": "ACTIVE",
+      "game": "Warframe",
+      "starts_at": "2026-04-15 13:00 Mountain Daylight Time",
+      "ends_at": "2026-04-16 18:14 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "cfc6b23d-163b-11f1-a931-0a58a9feac02",
+      "name": "R6S KICKOFF WEEK 3",
+      "status": "ACTIVE",
+      "game": "Rainbow Six Siege",
+      "starts_at": "2026-04-12 21:00 Mountain Daylight Time",
+      "ends_at": "2026-04-16 20:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "22911f8a-950d-422c-883f-959304cfaa46",
+      "name": "Season 7 Twitch Drops",
+      "status": "ACTIVE",
+      "game": "Marvel Rivals",
+      "starts_at": "2026-03-20 06:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "0adac641-ff36-4aa0-8b46-e19e25698ea0",
+      "name": "AOCP Knight 11 - #4/7",
+      "status": "ACTIVE",
+      "game": "Albion Online",
+      "starts_at": "2026-04-16 04:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 03:29 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "eefdf378-c084-43c3-8717-04328de4f0dc",
+      "name": "Radiant Wilds 1 - #4/7",
+      "status": "ACTIVE",
+      "game": "Albion Online",
+      "starts_at": "2026-04-16 04:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 03:29 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "fbc6ac8e-5519-4eae-bcfc-c065417cc902",
+      "name": "Guristas Damage Booster 3",
+      "status": "ACTIVE",
+      "game": "EVE Online",
+      "starts_at": "2026-04-10 05:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 04:29 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "405753c2-eba4-4b63-bb50-dff207ad4cfe",
+      "name": "2026 BDO Drops (Apr 16)",
+      "status": "ACTIVE",
+      "game": "Black Desert",
+      "starts_at": "2026-04-16 06:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 05:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "e25e7eea-6722-422e-ba2e-60752a007a46",
+      "name": "Affiliate 4/16/26",
+      "status": "ACTIVE",
+      "game": "Out of the Park Baseball 27",
+      "starts_at": "2026-04-16 07:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 06:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "09224d9b-a357-4de0-804b-6eba2eadaf3d",
+      "name": "Обновление 26.4: Часть 1",
+      "status": "ACTIVE",
+      "game": "Mir Korabley",
+      "starts_at": "2026-04-12 03:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 08:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "2e788228-4dbd-43be-a1dd-ce3d265c46df",
+      "name": "WoT A Birthday #3",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 08:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "f7f79e40-17cc-47f1-9250-35917c54be9f",
+      "name": "Lestakorabli - 26.4 #1",
+      "status": "ACTIVE",
+      "game": "Mir Korabley",
+      "starts_at": "2026-04-13 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 08:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "4ead2bd8-781c-4e65-b6c3-33d7417b9999",
+      "name": "MCOC Saga Month Week 2",
+      "status": "ACTIVE",
+      "game": "MARVEL Contest of Champions",
+      "starts_at": "2026-04-10 11:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 10:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "6e5f6a37-9da3-41fe-b272-f1504a98c0ab",
+      "name": "MCOC SagaMonth Week 2 CCP",
+      "status": "ACTIVE",
+      "game": "MARVEL Contest of Champions",
+      "starts_at": "2026-04-10 11:00 Mountain Daylight Time",
+      "ends_at": "2026-04-17 10:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "329ebeed-02b7-43cc-954b-28cb39005916",
+      "name": "Mobile Drop 7",
+      "status": "ACTIVE",
+      "game": "Rise Online",
+      "starts_at": "2026-04-16 11:59 Mountain Daylight Time",
+      "ends_at": "2026-04-17 11:56 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "8faa97f1-5d72-4a8e-bb64-747bfc0636c0",
+      "name": "ROW Drop 436",
+      "status": "ACTIVE",
+      "game": "Rise Online",
+      "starts_at": "2026-04-16 11:59 Mountain Daylight Time",
+      "ends_at": "2026-04-17 11:56 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "d163249b-7eca-49f4-8cc0-4117d7c47431",
+      "name": "April Week 2  - Artio",
+      "status": "ACTIVE",
+      "game": "SMITE 2",
+      "starts_at": "2026-04-11 05:00 Mountain Daylight Time",
+      "ends_at": "2026-04-18 04:57 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "07d3bfcb-73c8-438b-ac43-0ebfc4be730e",
+      "name": "Throne Awakening",
+      "status": "ACTIVE",
+      "game": "Myth of Empires: Throne",
+      "starts_at": "2026-04-16 07:00 Mountain Daylight Time",
+      "ends_at": "2026-04-18 06:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "b0cba4d4-e4e4-46bd-8bcf-d7db6b78ecf8",
+      "name": "Плей-Офф ЛБП 4.2",
+      "status": "ACTIVE",
+      "game": "Tanks Blitz",
+      "starts_at": "2026-04-16 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-18 12:20 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "e5533c6a-91f6-45bf-a47b-05e8e71b547a",
+      "name": "CDawg Cyclethon 5",
+      "status": "ACTIVE",
+      "game": "Just Chatting",
+      "starts_at": "2026-04-04 18:00 Mountain Daylight Time",
+      "ends_at": "2026-04-18 17:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "a6f3dd45-de2f-40ac-ac90-239448616972",
+      "name": "CDawg Cyclethon 5 Badge Campaign",
+      "status": "ACTIVE",
+      "game": "Just Chatting",
+      "starts_at": "2026-04-04 19:00 Mountain Daylight Time",
+      "ends_at": "2026-04-19 02:00 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "1d7612f2-75f5-4aac-b27b-77e8305053f4",
+      "name": "4.16-4.19 NBPL Spring",
+      "status": "ACTIVE",
+      "game": "NARAKA: BLADEPOINT",
+      "starts_at": "2026-04-16 02:00 Mountain Daylight Time",
+      "ends_at": "2026-04-19 09:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "e0f6ca0d-ba1b-4077-97df-723c47dead34",
+      "name": "Апрельский магазин 2\\3",
+      "status": "ACTIVE",
+      "game": "Mir Tankov",
+      "starts_at": "2026-04-12 05:05 Mountain Daylight Time",
+      "ends_at": "2026-04-19 14:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "e8d6bd2e-e1e7-47aa-a79e-8a2c76b9c3e8",
+      "name": "S&F Drops 2/3",
+      "status": "ACTIVE",
+      "game": "Shakes and Fidget",
+      "starts_at": "2026-04-15 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-19 15:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "b6af4739-dc89-45f2-bea2-3af24f54cccf",
+      "name": "S&F Drops 1/3",
+      "status": "ACTIVE",
+      "game": "Shakes and Fidget",
+      "starts_at": "2026-04-13 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-19 15:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "59efc91f-4530-4b23-8fb3-a4310454496f",
+      "name": "MD Drops Set 4",
+      "status": "ACTIVE",
+      "game": "Mobile Dungeon",
+      "starts_at": "2026-04-12 18:00 Mountain Daylight Time",
+      "ends_at": "2026-04-19 15:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "a45cce44-133a-11f1-b19d-0a58a9feac02",
+      "name": "Weekly Supply Drops #11",
+      "status": "ACTIVE",
+      "game": "Modern Warships",
+      "starts_at": "2026-04-12 18:00 Mountain Daylight Time",
+      "ends_at": "2026-04-19 17:29 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "8c90c55b-75ed-4a2d-8570-0dd2fa33b968",
+      "name": "DRAGONHEIR X TWITCH DROPS",
+      "status": "ACTIVE",
+      "game": "Dragonheir: Silent Gods",
+      "starts_at": "2026-04-06 18:00 Mountain Daylight Time",
+      "ends_at": "2026-04-19 17:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "83618a1f-a837-426f-a912-60f488ab675f",
+      "name": "U50 on PTS",
+      "status": "ACTIVE",
+      "game": "The Elder Scrolls Online",
+      "starts_at": "2026-04-13 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-19 21:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "6a12d65f-b72b-4d7b-a4ad-c2abdb3ea22e",
+      "name": "S20 Weekly 4.13",
+      "status": "ACTIVE",
+      "game": "NARAKA: BLADEPOINT",
+      "starts_at": "2026-04-12 22:00 Mountain Daylight Time",
+      "ends_at": "2026-04-19 21:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "fe370a50-cd88-45c5-a19b-85dc897e0731",
+      "name": "BlingBling Orzy",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "673ba45c-a9c3-44a8-8120-201b72af2094",
+      "name": "Bert-day Mailand",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "bb18da34-c5a9-4d1d-9049-f97fe49bd599",
+      "name": "Birthday Skill4ltu",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "a53c7bb5-bb78-4c90-a41e-2d484a83124c",
+      "name": "Birthday Cygan",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "41910d28-5d56-4c80-a944-2635ddcddbeb",
+      "name": "Afterparty DezGamez",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "c64f4c04-6ba6-44b6-89b3-be8e10edc83c",
+      "name": "Birthday NewMultiShow",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "3ff5ef06-6e65-4aa4-9b80-fcc13675727e",
+      "name": "Birthday KingBaby",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "afd5278e-4599-49ce-b10b-2c80444dd4d1",
+      "name": "Birthday MouzAkrobat",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "a70007f1-9746-497a-9a7f-1c4ecd7fa818",
+      "name": "Birthday TalkTo_MeGoose",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "52f1f32e-75db-4d3c-8a04-761f9eedede7",
+      "name": "CoolCumberGuys",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "684e04ec-2bf7-4740-8ddd-cb8b16163a22",
+      "name": "Birthday Dakillzor",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "35c654ea-8e67-480d-93d5-73c629261aeb",
+      "name": "Narozeninový Marty",
+      "status": "ACTIVE",
+      "game": "World of Tanks",
+      "starts_at": "2026-04-15 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "ea1b598a-6f71-4764-941b-684e9d9367c6",
+      "name": "Laptophound 4/13-19/26",
+      "status": "ACTIVE",
+      "game": "Out of the Park Baseball 27",
+      "starts_at": "2026-04-13 07:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 06:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "44fe2139-a4d7-4bfc-ad04-0fa50a959205",
+      "name": "Official 4/13-19/26",
+      "status": "ACTIVE",
+      "game": "Out of the Park Baseball 27",
+      "starts_at": "2026-04-13 07:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 06:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "c49990f2-a79d-456f-b99e-6e4207dfef1b",
+      "name": "Baby Chick",
+      "status": "ACTIVE",
+      "game": "Minecraft",
+      "starts_at": "2026-04-06 10:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 12:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "0d0add6e-cc05-40b1-ad51-18a63065b773",
+      "name": "Shadow Conclave Week 3",
+      "status": "ACTIVE",
+      "game": "MARVEL Strike Force",
+      "starts_at": "2026-04-13 15:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 14:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "f54e5832-eee1-4a01-b4b0-89f05c3705e8",
+      "name": "V4.1 Honkai: Star Rail",
+      "status": "ACTIVE",
+      "game": "Honkai: Star Rail",
+      "starts_at": "2026-03-23 19:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 18:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "3df34482-23e6-4be9-9065-0c3fe0fda543",
+      "name": "Fortnite Save the World",
+      "status": "ACTIVE",
+      "game": "Fortnite",
+      "starts_at": "2026-04-16 07:00 Mountain Daylight Time",
+      "ends_at": "2026-04-20 21:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "e68fdd70-2650-40a1-abb4-b5ee5f41227f",
+      "name": "Juggernauts Weekly Drops",
+      "status": "ACTIVE",
+      "game": "World of Tanks Console",
+      "starts_at": "2026-04-14 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-21 03:57 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "073e603c-672e-43ea-8bd6-4542e11c3d02",
+      "name": "Project Judas",
+      "status": "ACTIVE",
+      "game": "The Outlast Trials",
+      "starts_at": "2026-03-24 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-21 07:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "ca53e1c6-7103-4924-af17-5c4f776cd8f5",
+      "name": "April 2",
+      "status": "ACTIVE",
+      "game": "Ravendawn",
+      "starts_at": "2026-04-16 14:00 Mountain Daylight Time",
+      "ends_at": "2026-04-21 08:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "f0f6a712-c629-429a-a5b1-56f8a0e013e3",
+      "name": "April 2",
+      "status": "ACTIVE",
+      "game": "RavenQuest",
+      "starts_at": "2026-04-16 14:00 Mountain Daylight Time",
+      "ends_at": "2026-04-21 08:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "7c030f6a-23ac-4734-8026-a41394a3003f",
+      "name": "April Week 3",
+      "status": "ACTIVE",
+      "game": "Splinterlands",
+      "starts_at": "2026-04-14 11:00 Mountain Daylight Time",
+      "ends_at": "2026-04-21 10:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "d526a932-fee4-4bbd-97ed-828d2a93a5f9",
+      "name": "Viking Rise ",
+      "status": "ACTIVE",
+      "game": "Viking Rise",
+      "starts_at": "2026-03-25 04:20 Mountain Daylight Time",
+      "ends_at": "2026-04-21 17:29 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "6fc5c4c6-166b-47ff-ac25-56fcc2b66026",
+      "name": "Fun-For-All Earth Week",
+      "status": "ACTIVE",
+      "game": "Rivals of Aether II",
+      "starts_at": "2026-04-15 15:00 Mountain Daylight Time",
+      "ends_at": "2026-04-22 14:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "aed23b44-9e19-4266-a1b9-6c9a7fb6aabd",
+      "name": "15.3 WOWS Channel Drop",
+      "status": "ACTIVE",
+      "game": "World of Warships",
+      "starts_at": "2026-04-15 16:00 Mountain Daylight Time",
+      "ends_at": "2026-04-22 15:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "9ea44395-5700-4653-837a-f3f91272f14a",
+      "name": "V2.4 Infinity Nikki",
+      "status": "ACTIVE",
+      "game": "Infinity Nikki",
+      "starts_at": "2026-03-26 21:00 Mountain Daylight Time",
+      "ends_at": "2026-04-22 20:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "bf8ef319-e15d-4008-a7ef-392498dd19a0",
+      "name": "Xeno Point Drops",
+      "status": "ACTIVE",
+      "game": "PUBG: BATTLEGROUNDS",
+      "starts_at": "2026-04-08 03:00 Mountain Daylight Time",
+      "ends_at": "2026-04-23 03:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "e54aafd5-31a9-4cf2-802e-8732d9553f47",
+      "name": "Update 15.3 Drop: Week 2",
+      "status": "ACTIVE",
+      "game": "World of Warships",
+      "starts_at": "2026-04-16 10:00 Mountain Daylight Time",
+      "ends_at": "2026-04-23 09:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "0bf58045-067d-49e5-b4de-60edbc08ce05",
+      "name": "Cuddly Void Grrgle",
+      "status": "ACTIVE",
+      "game": "World of Warcraft",
+      "starts_at": "2026-03-26 16:00 Mountain Daylight Time",
+      "ends_at": "2026-04-23 15:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "dc7f6c59-0cc5-11f1-a2af-0a58a9feac02",
+      "name": "Patient Zero Requiem #2",
+      "status": "ACTIVE",
+      "game": "HITMAN World of Assassination",
+      "starts_at": "2026-04-02 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-23 17:29 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "3b0cfc5a-0320-4a04-aa99-3a8cf0925037",
+      "name": "April #3",
+      "status": "ACTIVE",
+      "game": "UFL",
+      "starts_at": "2026-04-16 03:00 Mountain Daylight Time",
+      "ends_at": "2026-04-23 17:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "f1942132-40dd-47c6-87dd-5149378c0537",
+      "name": "April Fool's Day Drops",
+      "status": "ACTIVE",
+      "game": "Once Human",
+      "starts_at": "2026-03-31 19:00 Mountain Daylight Time",
+      "ends_at": "2026-04-23 17:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "8ed2a739-c90d-11f0-b54d-0a58a9feac02",
+      "name": "Bloodhunt Ends Drops",
+      "status": "ACTIVE",
+      "game": "Vampire: The Masquerade - Bloodhunt",
+      "starts_at": "2026-03-27 02:00 Mountain Daylight Time",
+      "ends_at": "2026-04-24 01:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "d6704c39-dff8-4ba2-9f65-365bef12fd47",
+      "name": "OWCS S1 NA & EMEA",
+      "status": "ACTIVE",
+      "game": "Overwatch",
+      "starts_at": "2026-04-10 01:30 Mountain Daylight Time",
+      "ends_at": "2026-04-24 04:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "3e258b27-5759-459e-8c72-551fbabb7b62",
+      "name": "Preseason 2026 Drops I",
+      "status": "ACTIVE",
+      "game": "Marvel Rivals",
+      "starts_at": "2026-03-27 08:00 Mountain Daylight Time",
+      "ends_at": "2026-04-24 07:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "ef30b3e4-8fe2-4d9d-b2f7-1fe0cdf59dda",
+      "name": "MM Week of Sun",
+      "status": "ACTIVE",
+      "game": "Marble Racing Manager",
+      "starts_at": "2026-04-16 10:00 Mountain Daylight Time",
+      "ends_at": "2026-04-24 09:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "146b2794-b5a3-4f37-8f2c-1079b448fe88",
+      "name": "SAR Spring Animals",
+      "status": "ACTIVE",
+      "game": "Super Animal Royale",
+      "starts_at": "2026-03-31 11:00 Mountain Daylight Time",
+      "ends_at": "2026-04-25 10:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "e8aed708-8d0d-4891-a952-988998beb073",
+      "name": "PTCGL Perfect Order Drops",
+      "status": "ACTIVE",
+      "game": "Pokémon Trading Card Game Live",
+      "starts_at": "2026-04-11 01:00 Mountain Daylight Time",
+      "ends_at": "2026-04-26 00:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "293f00d8-e246-4355-8ca6-0ca1e1529d66",
+      "name": "4.10-4.26 NBPL Spring",
+      "status": "ACTIVE",
+      "game": "NARAKA: BLADEPOINT",
+      "starts_at": "2026-04-10 10:00 Mountain Daylight Time",
+      "ends_at": "2026-04-26 09:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "12d8a938-5884-495d-8e92-57a0ddc06882",
+      "name": "Split 2 - Sub Drop 1\t\t\t\t\t",
+      "status": "ACTIVE",
+      "game": "League of Legends",
+      "starts_at": "2026-03-31 17:10 Mountain Daylight Time",
+      "ends_at": "2026-04-26 11:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "99513bff-30d9-4eee-bfcd-244c0132c39b",
+      "name": "Coins 9999 x 3 Drops",
+      "status": "ACTIVE",
+      "game": "The Midnight Walkers",
+      "starts_at": "2026-04-14 04:49 Mountain Daylight Time",
+      "ends_at": "2026-04-27 04:48 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "7c8249dd-19a9-4c75-8cde-74b1d2e952cb",
+      "name": "MW: Launch Point",
+      "status": "ACTIVE",
+      "game": "Modern Warships",
+      "starts_at": "2026-04-16 04:09 Mountain Daylight Time",
+      "ends_at": "2026-04-27 17:29 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "1d405ad7-b8e5-4329-a699-4148557fbe7d",
+      "name": "V6.5 Genshin Impact Drops",
+      "status": "ACTIVE",
+      "game": "Genshin Impact",
+      "starts_at": "2026-04-07 21:00 Mountain Daylight Time",
+      "ends_at": "2026-04-27 21:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "71acdae7-505d-4158-bb50-fc16f809e22f",
+      "name": "Dodomogged",
+      "status": "ACTIVE",
+      "game": "Windrose",
+      "starts_at": "2026-04-14 01:00 Mountain Daylight Time",
+      "ends_at": "2026-04-28 00:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "e7216bc8-84cd-465d-9f93-74488aa3dcd5",
+      "name": "S5 Launch Drops",
+      "status": "ACTIVE",
+      "game": "Arena Breakout: Infinite",
+      "starts_at": "2026-04-02 03:00 Mountain Daylight Time",
+      "ends_at": "2026-04-28 02:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "63187ca2-ef63-4897-be38-8ff036555656",
+      "name": "FLASHPOINT",
+      "status": "ACTIVE",
+      "game": "ARC Raiders",
+      "starts_at": "2026-03-31 05:00 Mountain Daylight Time",
+      "ends_at": "2026-04-28 04:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "4a0ad82b-7e26-4cae-9e65-8fc5b8c7f3de",
+      "name": "LOY DROPS_ALL (26_APR)",
+      "status": "ACTIVE",
+      "game": "Legend of YMIR",
+      "starts_at": "2026-04-07 03:00 Mountain Daylight Time",
+      "ends_at": "2026-04-28 08:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "a7533bb6-a402-4ae4-817e-4d73c600ca02",
+      "name": "LOY DROPS_SSS (26 APR)",
+      "status": "ACTIVE",
+      "game": "Legend of YMIR",
+      "starts_at": "2026-04-07 03:00 Mountain Daylight Time",
+      "ends_at": "2026-04-28 08:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "94924e0c-dfe6-497e-978d-f590ac68bd25",
+      "name": "Last Flag Celebration",
+      "status": "ACTIVE",
+      "game": "Last Flag",
+      "starts_at": "2026-04-14 11:00 Mountain Daylight Time",
+      "ends_at": "2026-04-28 11:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "788a45c1-7f71-4c6f-b2a7-3d1cfb31e425",
+      "name": "8th Anniversary Envoys",
+      "status": "ACTIVE",
+      "game": "MARVEL Strike Force",
+      "starts_at": "2026-03-31 15:00 Mountain Daylight Time",
+      "ends_at": "2026-04-28 14:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "cf94d87e-15ae-411d-b0f8-b3cbb5cfb172",
+      "name": "Craft a Bit Sword!",
+      "status": "ACTIVE",
+      "game": "Trove",
+      "starts_at": "2026-04-16 12:00 Mountain Daylight Time",
+      "ends_at": "2026-04-28 17:29 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "7e073602-27cb-4b0d-9187-8a6b57f7f804",
+      "name": "Bloomhalla - April 26",
+      "status": "ACTIVE",
+      "game": "Brawlhalla",
+      "starts_at": "2026-04-08 11:00 Mountain Daylight Time",
+      "ends_at": "2026-04-28 17:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "c8b286d8-2c51-43b4-92e5-4beb86c54eaf",
+      "name": "Season 6 Locker Code",
+      "status": "ACTIVE",
+      "game": "NBA 2K26",
+      "starts_at": "2026-04-01 09:00 Mountain Daylight Time",
+      "ends_at": "2026-04-29 08:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "04f881ff-9381-4435-a002-a5cc4938c732",
+      "name": "NASA Artemis II Launch",
+      "status": "ACTIVE",
+      "game": "Science & Technology",
+      "starts_at": "2026-04-01 10:00 Mountain Daylight Time",
+      "ends_at": "2026-04-29 09:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "cd0be559-0ed2-4664-95b1-c920b3e6fc05",
+      "name": "Season 2 Drops weapons",
+      "status": "ACTIVE",
+      "game": "SPLITGATE: Arena Reloaded",
+      "starts_at": "2026-04-02 12:00 Mountain Daylight Time",
+      "ends_at": "2026-04-29 17:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "61c608b0-efd5-4872-8778-690c22586248",
+      "name": "Where Winds Meet April",
+      "status": "ACTIVE",
+      "game": "Where Winds Meet",
+      "starts_at": "2026-04-01 22:00 Mountain Daylight Time",
+      "ends_at": "2026-04-29 21:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "d6f63bd7-0b24-48a2-9400-ecf0145420d5",
+      "name": "Spring Drops!",
+      "status": "ACTIVE",
+      "game": "Coin Pusher Live",
+      "starts_at": "2026-04-02 02:00 Mountain Daylight Time",
+      "ends_at": "2026-04-30 00:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "190ffbda-918f-4bf4-b832-697b61904252",
+      "name": "RESPEC ORDER DROPS",
+      "status": "ACTIVE",
+      "game": "THE FINALS",
+      "starts_at": "2026-04-16 04:30 Mountain Daylight Time",
+      "ends_at": "2026-04-30 03:57 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "4626cd5c-2689-42cb-81de-0b4948b806cd",
+      "name": "Kakele Online April 2",
+      "status": "ACTIVE",
+      "game": "Kakele Online - MMORPG",
+      "starts_at": "2026-04-15 05:10 Mountain Daylight Time",
+      "ends_at": "2026-04-30 05:09 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "1562d3e5-cb0f-49ba-8cd2-2af9e98b1124",
+      "name": "April 2026",
+      "status": "ACTIVE",
+      "game": "Wolvesville",
+      "starts_at": "2026-04-02 18:00 Mountain Daylight Time",
+      "ends_at": "2026-04-30 17:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "d1db23f1-53e2-4e0a-a6c2-20fc88966702",
+      "name": "Hitch's Ride for Wishes",
+      "status": "ACTIVE",
+      "game": "Just Chatting",
+      "starts_at": "2026-04-09 15:00 Mountain Daylight Time",
+      "ends_at": "2026-05-02 14:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "86a84aaa-02cb-43dd-8133-3f166ef5799d",
+      "name": "1.13 Premium Drops",
+      "status": "ACTIVE",
+      "game": "Predecessor",
+      "starts_at": "2026-04-07 12:00 Mountain Daylight Time",
+      "ends_at": "2026-05-04 11:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "d5afa80c-a1fb-4b56-aa5c-55a05f8f56f8",
+      "name": "Wild Assault Twitch Drops",
+      "status": "ACTIVE",
+      "game": "Wild Assault",
+      "starts_at": "2026-04-10 11:30 Mountain Daylight Time",
+      "ends_at": "2026-05-07 00:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "4c34af24-e9af-4d1c-bcdc-96c183043f1e",
+      "name": "Soulmask Drops Campaign",
+      "status": "ACTIVE",
+      "game": "Soulmask",
+      "starts_at": "2026-04-09 18:00 Mountain Daylight Time",
+      "ends_at": "2026-05-07 17:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "da18b0f5-b76e-49e4-ac26-e6c114727c44",
+      "name": "North Hunt Release",
+      "status": "ACTIVE",
+      "game": "North Hunt",
+      "starts_at": "2026-04-16 11:00 Mountain Daylight Time",
+      "ends_at": "2026-05-09 05:37 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "0eb58253-4174-427d-8526-d0ef493c8451",
+      "name": "S2 Launch Drops",
+      "status": "ACTIVE",
+      "game": "Overwatch",
+      "starts_at": "2026-04-14 20:24 Mountain Daylight Time",
+      "ends_at": "2026-05-11 00:58 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "9b121472-e01e-475f-9874-30c3502874da",
+      "name": "Winston Overwatch Badge",
+      "status": "ACTIVE",
+      "game": "Overwatch",
+      "starts_at": "2026-04-14 12:00 Mountain Daylight Time",
+      "ends_at": "2026-05-12 11:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "5a7d400b-bd2a-41c5-b025-2bdadaeaec7d",
+      "name": "<MONGIL: STAR DIVE> Drops",
+      "status": "ACTIVE",
+      "game": "Mongil: Star Dive",
+      "starts_at": "2026-04-14 19:00 Mountain Daylight Time",
+      "ends_at": "2026-05-12 18:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "7cca39fd-6e35-4630-8e8c-8b7ab066f534",
+      "name": "Butterbee",
+      "status": "ACTIVE",
+      "game": "Don't Starve Together",
+      "starts_at": "2026-04-16 11:00 Mountain Daylight Time",
+      "ends_at": "2026-05-14 10:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "c83fc2dc-10fe-11f1-a4d2-0a58a9feac02",
+      "name": "Quackity's QSMP S2",
+      "status": "ACTIVE",
+      "game": "QSMP",
+      "starts_at": "2026-03-14 12:00 Mountain Daylight Time",
+      "ends_at": "2026-07-01 01:59 Mountain Daylight Time",
+      "drops": []
+    },
+    {
+      "id": "760e1ca7-2ed9-45f7-ba49-7615d54430fb",
+      "name": "Quackity's QSMP2",
+      "status": "ACTIVE",
+      "game": "QSMP",
+      "starts_at": "2026-03-14 12:00 Mountain Daylight Time",
+      "ends_at": "2026-07-01 08:59 Mountain Daylight Time",
+      "drops": []
+    }
+  ]
+}

@@ -58,13 +58,19 @@ class Stream:
                     "muted": False,
                     "player": "site",
                     "user_id": self.channel._twitch._auth_state.user_id,
-                }
+                },
             }
         ]
-        return {"data": (b64encode(json_minify(payload).encode("utf8"))).decode("utf8")}
+        return {
+            "data": (b64encode(json_minify(payload).encode("utf8"))).decode(
+                "utf8"
+            )
+        }
 
     @classmethod
-    def from_get_stream(cls, channel: Channel, channel_data: JsonType) -> Stream:
+    def from_get_stream(
+        cls, channel: Channel, channel_data: JsonType
+    ) -> Stream:
         stream = channel_data["stream"]
         settings = channel_data["broadcastSettings"]
         return cls(
@@ -77,12 +83,18 @@ class Stream:
 
     @classmethod
     def from_directory(
-        cls, channel: Channel, channel_data: JsonType, *, drops_enabled: bool = False
+        cls,
+        channel: Channel,
+        channel_data: JsonType,
+        *,
+        drops_enabled: bool = False,
     ) -> Stream:
         self = cls(
             channel,
             id=channel_data["id"],
-            game=channel_data["game"],  # has to be there since we searched with it
+            game=channel_data[
+                "game"
+            ],  # has to be there since we searched with it
             viewers=channel_data["viewersCount"],
             title=channel_data["title"],
         )
@@ -98,14 +110,20 @@ class Stream:
         if self._stream_url is not None:
             return self._stream_url
         # get the stream playback access token from GQL
-        playback_token_response: JsonType = await self.channel._twitch.gql_request(
-            GQL_OPERATIONS["PlaybackAccessToken"].with_variables({"login": self.channel._login})
+        playback_token_response: JsonType = (
+            await self.channel._twitch.gql_request(
+                GQL_OPERATIONS["PlaybackAccessToken"].with_variables(
+                    {"login": self.channel._login}
+                )
+            )
         )
-        token_data: JsonType = playback_token_response["data"]["streamPlaybackAccessToken"]
+        token_data: JsonType = playback_token_response["data"][
+            "streamPlaybackAccessToken"
+        ]
         token_value = token_data["value"]
         token_signature = token_data["signature"]
         # using the token, query Twitch for a list of all available stream qualities
-        available_qualities: str = ''
+        available_qualities: str = ""
         try:
             async with self.channel._twitch.request(
                 "GET",
@@ -126,11 +144,15 @@ class Stream:
                 if isinstance(available_json, list):
                     available_json = available_json[0]
                 if "error" in available_json:
-                    logger.error(f"Stream URL get error: \"{available_json['error']}\"")
+                    logger.error(
+                        f"Stream URL get error: \"{available_json['error']}\""
+                    )
                     self.channel.set_offline()
                 return None
             # pick the last URL from the list, usually with the lowest quality stream
-            self._stream_url = cast(URLType, URL(available_qualities.strip().split("\n")[-1]))
+            self._stream_url = cast(
+                URLType, URL(available_qualities.strip().split("\n")[-1])
+            )
         except (aiohttp.InvalidURL, ValueError):
             self.channel._twitch.print(available_qualities)
             raise
@@ -139,8 +161,15 @@ class Stream:
 
 class Channel:
     __slots__ = (
-        "_twitch", "_gui_channels", "id", "_login", "_display_name", "_spade_url",
-        "_stream", "_pending_stream_up", "acl_based"
+        "_twitch",
+        "_gui_channels",
+        "id",
+        "_login",
+        "_display_name",
+        "_spade_url",
+        "_stream",
+        "_pending_stream_up",
+        "acl_based",
     )
 
     def __init__(
@@ -182,9 +211,14 @@ class Channel:
     ) -> Channel:
         channel = data["broadcaster"]
         self = cls(
-            twitch, id=channel["id"], login=channel["login"], display_name=channel["displayName"]
+            twitch,
+            id=channel["id"],
+            login=channel["login"],
+            display_name=channel["displayName"],
         )
-        self._stream = Stream.from_directory(self, data, drops_enabled=drops_enabled)
+        self._stream = Stream.from_directory(
+            self, data, drops_enabled=drops_enabled
+        )
         return self
 
     def __repr__(self) -> str:
@@ -204,7 +238,9 @@ class Channel:
 
     @property
     def stream_gql(self) -> GQLOperation:
-        return GQL_OPERATIONS["GetStreamInfo"].with_variables({"channel": self._login})
+        return GQL_OPERATIONS["GetStreamInfo"].with_variables(
+            {"channel": self._login}
+        )
 
     @property
     def name(self) -> str:
@@ -291,31 +327,129 @@ class Channel:
         SPADE_PATTERN: str = (
             r'"spade_?url": ?"(https://video-edge-[.\w\-/]+\.ts(?:\?allow_stream=true)?)"'
         )
+
+        # Enhanced patterns to catch more variations
+        ENHANCED_SPADE_PATTERNS: list[str] = [
+            # New simple spade URL format (2024/2025) - exact match for current format
+            r'"spade_url":"(https://spade\.twitch\.tv/track)"',  # Exact current format
+            r'"spade_url":"(https://spade\.twitch\.tv/[^"]*)"',  # New simple format
+            r'"spade_url":\s*"(https://spade\.twitch\.tv/[^"]*)"',  # With optional whitespace
+            r'"spade_?url":\s*"(https://spade\.twitch\.tv/[^"]*)"',  # Variant with optional underscore
+            # Legacy video-edge patterns (kept for compatibility)
+            r'"spade_?url": ?"(https://video-edge-[.\w\-/]+\.ts(?:\?[^"]*)?)"',  # Allow any query params
+            r'"spade_?url": ?"(https://[.\w\-]+\.ttvnw\.net[.\w\-/]+\.ts(?:\?[^"]*)?)"',  # Alternative domain
+            r'"spade_?url": ?"(https://[^"]+video[^"]*\.ts[^"]*)"',  # Very broad pattern for video URLs
+            r'"spadeUrl": ?"(https://[^"]+\.ts[^"]*)"',  # camelCase variant
+            r'"SPADE_URL": ?"(https://[^"]+\.ts[^"]*)"',  # uppercase variant
+            r'"spade_url":\s*"(https://video-edge-[^"]+\.ttvnw\.net[^"]*\.ts[^"]*)"',  # Old format with ttvnw.net
+            r'"spade_url":\s*"(https://[^"]*video-edge[^"]*\.ts[^"]*)"',  # Broader video-edge pattern
+        ]
+
         async with self._twitch.request("GET", self.url) as response1:
             streamer_html: str = await response1.text(encoding="utf8")
         match = re.search(SPADE_PATTERN, streamer_html, re.I)
         if not match:
             match = re.search(SETTINGS_PATTERN, streamer_html, re.I)
             if not match:
-                raise MinerException("Error while spade_url extraction: step #1")
+                raise MinerException(
+                    "Error while spade_url extraction: step #1"
+                )
             streamer_settings = match.group(1)
-            async with self._twitch.request("GET", streamer_settings) as response2:
+            async with self._twitch.request(
+                "GET", streamer_settings
+            ) as response2:
                 settings_js: str = await response2.text(encoding="utf8")
+
+            # Try original pattern first
             match = re.search(SPADE_PATTERN, settings_js, re.I)
+
+            # If original pattern fails, try enhanced patterns
             if not match:
-                raise MinerException("Error while spade_url extraction: step #2")
+                for pattern in ENHANCED_SPADE_PATTERNS:
+                    match = re.search(pattern, settings_js, re.I)
+                    if match:
+                        logger.info(
+                            f"Spade URL found with enhanced pattern: {pattern}"
+                        )
+                        break
+
+            # If still no match, log debug information
+            if not match:
+                logger.error(
+                    "No spade URL pattern matched. Debug information:"
+                )
+
+                # Test each pattern manually to see what's happening
+                logger.error("Testing patterns individually:")
+                for i, pattern in enumerate(ENHANCED_SPADE_PATTERNS):
+                    test_match = re.search(pattern, settings_js, re.I)
+                    logger.error(
+                        f"Pattern {i}: {pattern} -> {'MATCH' if test_match else 'NO MATCH'}"
+                    )
+                    if test_match:
+                        logger.error(f"  Match result: {test_match.group(1)}")
+
+                # Look for any URL containing 'video' or 'edge'
+                video_urls = re.findall(
+                    r'"[^"]*(?:video|edge)[^"]*"', settings_js, re.I
+                )
+                if video_urls:
+                    logger.error(
+                        f"Found video-related URLs: {video_urls[:5]}"
+                    )  # Show first 5
+
+                # Look for any .ts URLs
+                ts_urls = re.findall(r'"[^"]*\.ts[^"]*"', settings_js, re.I)
+                if ts_urls:
+                    logger.error(
+                        f"Found .ts URLs: {ts_urls[:5]}"
+                    )  # Show first 5
+
+                # Look for spade-related keys
+                spade_keys = re.findall(
+                    r'"[^"]*spade[^"]*"[^{]*?:', settings_js, re.I
+                )
+                if spade_keys:
+                    logger.error(f"Found spade-related keys: {spade_keys[:5]}")
+
+                # Look for the exact pattern we expect
+                exact_pattern_test = re.search(
+                    r'"spade_url":"https://spade\.twitch\.tv/track"',
+                    settings_js,
+                )
+                logger.error(
+                    f"Exact pattern test: {'MATCH' if exact_pattern_test else 'NO MATCH'}"
+                )
+
+                # Save debug content to file for analysis
+                debug_filename = f"debug_spade_settings_{self._login}.js"
+                try:
+                    with open(debug_filename, "w", encoding="utf-8") as f:
+                        f.write(settings_js)
+                    logger.error(
+                        f"Saved settings content to {debug_filename} for analysis"
+                    )
+                except Exception as e:
+                    logger.error(f"Could not save debug file: {e}")
+
+                raise MinerException(
+                    "Error while spade_url extraction: step #2"
+                )
         return URLType(match.group(1))
 
     def _check_drops_enabled(self, available_drops: list[JsonType]) -> bool:
         return any(
             (
-                (campaign := self._twitch._campaigns.get(campaign_data["id"])) is not None
+                (campaign := self._twitch._campaigns.get(campaign_data["id"]))
+                is not None
                 and campaign.can_earn(self, ignore_channel_status=True)
             )
             for campaign_data in available_drops
         )
 
-    def external_update(self, channel_data: JsonType, available_drops: list[JsonType]):
+    def external_update(
+        self, channel_data: JsonType, available_drops: list[JsonType]
+    ):
         """
         Update stream information based on data provided externally.
 
@@ -331,7 +465,9 @@ class Channel:
 
     async def get_stream(self) -> Stream | None:
         try:
-            response: JsonType = await self._twitch.gql_request(self.stream_gql)
+            response: JsonType = await self._twitch.gql_request(
+                self.stream_gql
+            )
         except MinerException as exc:
             raise MinerException(f"Channel: {self._login}") from exc
         channel_data: JsonType | None = response["data"]["user"]
@@ -345,14 +481,24 @@ class Channel:
         stream = Stream.from_get_stream(self, channel_data)
         if not stream.drops_enabled:
             try:
-                available_drops_campaigns: JsonType = await self._twitch.gql_request(
-                    GQL_OPERATIONS["AvailableDrops"].with_variables({"channelID": str(self.id)})
+                available_drops_campaigns: JsonType = (
+                    await self._twitch.gql_request(
+                        GQL_OPERATIONS["AvailableDrops"].with_variables(
+                            {"channelID": str(self.id)}
+                        )
+                    )
                 )
             except MinerException:
-                logger.log(CALL, f"AvailableDrops GQL call failed for channel: {self._login}")
+                logger.log(
+                    CALL,
+                    f"AvailableDrops GQL call failed for channel: {self._login}",
+                )
             else:
                 stream.drops_enabled = self._check_drops_enabled(
-                    available_drops_campaigns["data"]["channel"]["viewerDropCampaigns"] or []
+                    available_drops_campaigns["data"]["channel"][
+                        "viewerDropCampaigns"
+                    ]
+                    or []
                 )
         return stream
 
@@ -437,7 +583,7 @@ class Channel:
         # the response may contain some invalid JSON with duplicate double quotes
         # in the value strings: we need to get rid of them by removing the "url" key entirely
         # if no JSON can be found within the response, this is a NOOP
-        available_chunks = re.sub(r'"url": ?".+}",', '', available_chunks)
+        available_chunks = re.sub(r'"url": ?".+}",', "", available_chunks)
         # try to decode the suspected JSON
         try:
             available_json: JsonType = json.loads(available_chunks)
@@ -449,7 +595,9 @@ class Channel:
             if isinstance(available_json, list):
                 available_json = available_json[0]
             if "error" in available_json:
-                logger.error(f"Send watch error: \"{available_json['error']}\"")
+                logger.error(
+                    f"Send watch error: \"{available_json['error']}\""
+                )
             return False
         # the list contains ~10-13 chunks of the stream at 2s intervals,
         # pick the last chunk URL available. Ensure it's not the end-of-stream tag,
@@ -461,7 +609,9 @@ class Channel:
         stream_chunk_url: URLType = URLType(selected_chunk)
         # sending a HEAD request is enough to advance the drops,
         # without downloading the actual stream data
-        async with self._twitch.request("HEAD", stream_chunk_url) as head_response:
+        async with self._twitch.request(
+            "HEAD", stream_chunk_url
+        ) as head_response:
             return head_response.status == 200
 
     async def send_watch(self) -> bool:

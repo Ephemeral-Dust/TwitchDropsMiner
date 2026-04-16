@@ -1,0 +1,63 @@
+{
+  "timestamp": "2026-04-16T14:43:38.343491",
+  "description": "Sample emote drop structure for testing",
+  "sample_emote_drop": {
+    "id": "test_emote_drop_001",
+    "name": "Special Twitch Emote Drop",
+    "benefitEdges": [
+      {
+        "benefit": {
+          "id": "emote_benefit_123",
+          "name": "PogChamp Emote",
+          "distributionType": "EMOTE",
+          "imageAssetURL": "https://static-cdn.jtvnw.net/emoticons/v2/305954156/default/dark/1.0"
+        }
+      }
+    ],
+    "startAt": "2025-12-01T00:00:00Z",
+    "endAt": "2025-12-31T23:59:59Z",
+    "preconditionDrops": [],
+    "self": {
+      "dropInstanceID": "instance_123",
+      "isClaimed": false
+    }
+  },
+  "sample_campaign": {
+    "id": "test_campaign_emote",
+    "name": "Emote Drop Test Campaign",
+    "game": {
+      "displayName": "Test Game"
+    },
+    "timeBasedDrops": [
+      {
+        "id": "test_emote_drop_001",
+        "name": "Special Twitch Emote Drop",
+        "benefitEdges": [
+          {
+            "benefit": {
+              "id": "emote_benefit_123",
+              "name": "PogChamp Emote",
+              "distributionType": "EMOTE",
+              "imageAssetURL": "https://static-cdn.jtvnw.net/emoticons/v2/305954156/default/dark/1.0"
+            }
+          }
+        ],
+        "startAt": "2025-12-01T00:00:00Z",
+        "endAt": "2025-12-31T23:59:59Z",
+        "preconditionDrops": [],
+        "self": {
+          "dropInstanceID": "instance_123",
+          "isClaimed": false
+        }
+      }
+    ]
+  },
+  "analysis": {
+    "emote_benefit_structure": "EMOTE type in distributionType field",
+    "potential_issues": [
+      "Need to verify EMOTE enum exists in BenefitType",
+      "Check if emote drops require special handling vs regular drops",
+      "Verify image URLs and claiming process"
+    ]
+  }
+}
