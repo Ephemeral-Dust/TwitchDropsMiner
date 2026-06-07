@@ -1312,12 +1312,18 @@ class Twitch:
                 if "errors" in response_json:
                     for error_dict in response_json["errors"]:
                         if "message" in error_dict:
+<<<<<<< HEAD
                             if (
                                 single_retry
                                 and error_dict["message"] in (
                                     "service error",
                                     "PersistedQueryNotFound",
                                 )
+=======
+                            if single_retry and error_dict["message"] in (
+                                "service error",
+                                "PersistedQueryNotFound",
+>>>>>>> 8fcfe35 (Fix GQL error tuple in gql_request)
                             ):
                                 logger.error(
                                     f"Retrying a {error_dict['message']} for "
