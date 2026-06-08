@@ -76,6 +76,14 @@ Every several seconds, the application pretends to watch a particular stream by 
 
 If you'd be interested in running the latest master from source or building your own executable, see the wiki page explaining how to do so: https://github.com/DevilXD/TwitchDropsMiner/wiki/Setting-up-the-environment,-building-and-running
 
+### Fork Integration Notes (2026-06-07):
+
+- Local Windows helper scripts were aligned to use `venv` (not `env`) in `setup_env.bat`, `build.bat`, and `run_dev.bat`.
+- `Auto claim drops` was added as a new General setting while keeping upstream Advanced settings intact.
+- Upstream badge/emote handling (`enable_badges_emotes`) and available drops validation (`available_drops_check`) were intentionally preserved.
+- When `Auto claim drops` is disabled, claim-ready drops are treated as complete for progression and can be claimed manually from the Inventory tab.
+- Manual claim support adds an explicit `Claim` button for claim-ready drops, plus a `ready_to_claim` status message path.
+
 ### Support
 
 If you'd encounter any issues with the miner:
