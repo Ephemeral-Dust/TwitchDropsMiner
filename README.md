@@ -33,21 +33,21 @@ Every several seconds, the application pretends to watch a particular stream by 
 
 ### Notes:
 
-> [!WARNING]  
-> Due to how Twitch handles the drop progression on their side, watching a stream in the browser (or by any other means) on the same account that is actively being used by the miner, will usually cause the miner to misbehave, reporting false progress and getting stuck mining the current drop.  
-> 
+> [!WARNING]
+> Due to how Twitch handles the drop progression on their side, watching a stream in the browser (or by any other means) on the same account that is actively being used by the miner, will usually cause the miner to misbehave, reporting false progress and getting stuck mining the current drop.
+>
 > Using the same account to watch other streams during mining is thus discouraged, in order to avoid any problems arising from it.
 
-> [!CAUTION]  
+> [!CAUTION]
 > Persistent cookies will be stored in the `cookies.jar` file, from which the authorization (login) information will be restored on each subsequent run. Make sure to keep your cookies file safe, as the authorization information it stores can give another person access to your Twitch account, even without them knowing your password!
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > Successfully logging into your Twitch account in the application may cause Twitch to send you a "New Login" notification email. This is normal - you can verify that it comes from your own IP address. The detected browser during the login will be "Chrome", as that's what the miner currently presents itself to the Twitch server.
 
-> [!NOTE]  
+> [!NOTE]
 > The time remaining timer always countdowns a single minute and then stops - it is then restarted only after the application redetermines the remaining time. This "redetermination" can happen at any time Twitch decides to report on the drop's progress, but not later than 20 seconds after the timer reaches zero. The seconds timer is only an approximation and does not represent nor affect actual mining speed. The time variations are due to Twitch sometimes not reporting drop progress at all, or reporting progress for the wrong drop - these cases have all been accounted for in the application though.
 
-> [!NOTE]  
+> [!NOTE]
 > The source code requires Python 3.10 or higher to run.
 
 ### Notes about the Windows build:
@@ -88,20 +88,16 @@ If you'd be interested in running the latest master from source or building your
 
 If you'd encounter any issues with the miner:
 
-- Please see the [troubleshooting page](https://github.com/DevilXD/TwitchDropsMiner/wiki/Troubleshooting) for some common issues and their explanation.  
-- Please [search the issues page](https://github.com/DevilXD/TwitchDropsMiner/issues?q=sort%3Aupdated-desc%20is%3Aissue) to see if your issue hasn't been reported yet.  
+- Please see the [troubleshooting page](https://github.com/DevilXD/TwitchDropsMiner/wiki/Troubleshooting) for some common issues and their explanation.
+- Please [search the issues page](https://github.com/DevilXD/TwitchDropsMiner/issues?q=sort%3Aupdated-desc%20is%3Aissue) to see if your issue hasn't been reported yet.
 - If it's not been reported yet, feel free to open a new issue, describing your problem.
 
 If you like the application and found it useful, please consider donating a small amount of money to support me. Thank you!
 
 <div align="center">
 
-[![Buy me a coffee](https://i.imgur.com/cL95gzE.png)](
-    https://www.buymeacoffee.com/DevilXD
-)
-[![Support me on Patreon](https://i.imgur.com/Mdkb9jq.png)](
-    https://www.patreon.com/bePatron?u=26937862
-)
+[![Buy me a coffee](https://i.imgur.com/cL95gzE.png)](https://www.buymeacoffee.com/DevilXD)
+[![Support me on Patreon](https://i.imgur.com/Mdkb9jq.png)](https://www.patreon.com/bePatron?u=26937862)
 
 </div>
 
@@ -156,33 +152,33 @@ placed past the period character at the end.
 • Please ensure to leave a single empty new line at the end of the file.
 -->
 
-@guihkx - For the CI script, CI maintenance, and everything related to Linux builds.  
-@kWAYTV - For the implementation of the dark mode theme.  
-@crocchetto - For the macOS port.  
+@guihkx - For the CI script, CI maintenance, and everything related to Linux builds.
+@kWAYTV - For the implementation of the dark mode theme.
+@crocchetto - For the macOS port.
 
-@Bamboozul - For the entirety of the Arabic (العربية) translation.  
-@Suz1e - For the entirety of the Chinese (简体中文) translation and revisions.  
-@wwj010, @zhangminghao1989, @Self4215 - For the Chinese (简体中文) translation corrections and revisions.  
-@Ricky103403 - For the entirety of the Traditional Chinese (繁體中文) translation.  
-@LusTerCsI - For the Traditional Chinese (繁體中文) translation corrections and revisions.  
-@nwvh - For the entirety of the Czech (Čeština) translation.  
-@Kjerne - For the entirety of the Danish (Dansk) translation.  
-@lmdpocus - For the entirety of the Dutch (Nederlandse) translation.  
-@Rensoraa - For the Traditional Dutch (Nederlandse) translation corrections and revisions.  
-@roobini-gamer - For the entirety of the French (Français) translation.  
-@Calvineries - For the French (Français) translation revisions.  
-@ThisIsCyreX - For the entirety of the German (Deutsch) translation.  
-@Eriza-Z - For the entirety of the Indonesian translation.  
-@casungo - For the entirety of the Italian (Italiano) translation.  
-@ShimadaNanaki - For the entirety of the Japanese (日本語) translation.  
-@biroman -  For the entirety of the Norwegian (Norsk) translation.  
-@Patriot99 - For the Polish (Polski) translation and revisions (co-authored with @DevilXD).  
-@zarigata - For the entirety of the Portuguese (Português) translation.  
-@Sergo1217 - For the entirety of the Russian (Русский) translation.  
-@kilroy98, @flamesv - For the Russian (Русский) translation corrections and revisions.  
-@Shofuu - For the entirety of the Spanish (Español) translation and revisions.  
-@Forero-0 - For the Spanish (Español) translation revisions.  
-@alikdb - For the entirety of the Turkish (Türkçe) translation.  
-@DogancanYr, @Elderly-Emre, @Hweord - For the Turkish (Türkçe) translation corrections and revisions.  
-@Nollasko - For the entirety of the Ukrainian (Українська) translation and revisions.  
-@kilroy98 - For the Ukrainian (Українська) translation corrections and revisions.  
+@Bamboozul - For the entirety of the Arabic (العربية) translation.
+@Suz1e - For the entirety of the Chinese (简体中文) translation and revisions.
+@wwj010, @zhangminghao1989, @Self4215 - For the Chinese (简体中文) translation corrections and revisions.
+@Ricky103403 - For the entirety of the Traditional Chinese (繁體中文) translation.
+@LusTerCsI - For the Traditional Chinese (繁體中文) translation corrections and revisions.
+@nwvh - For the entirety of the Czech (Čeština) translation.
+@Kjerne - For the entirety of the Danish (Dansk) translation.
+@lmdpocus - For the entirety of the Dutch (Nederlandse) translation.
+@Rensoraa - For the Traditional Dutch (Nederlandse) translation corrections and revisions.
+@roobini-gamer - For the entirety of the French (Français) translation.
+@Calvineries - For the French (Français) translation revisions.
+@ThisIsCyreX - For the entirety of the German (Deutsch) translation.
+@Eriza-Z - For the entirety of the Indonesian translation.
+@casungo - For the entirety of the Italian (Italiano) translation.
+@ShimadaNanaki - For the entirety of the Japanese (日本語) translation.
+@biroman - For the entirety of the Norwegian (Norsk) translation.
+@Patriot99 - For the Polish (Polski) translation and revisions (co-authored with @DevilXD).
+@zarigata - For the entirety of the Portuguese (Português) translation.
+@Sergo1217 - For the entirety of the Russian (Русский) translation.
+@kilroy98, @flamesv - For the Russian (Русский) translation corrections and revisions.
+@Shofuu - For the entirety of the Spanish (Español) translation and revisions.
+@Forero-0 - For the Spanish (Español) translation revisions.
+@alikdb - For the entirety of the Turkish (Türkçe) translation.
+@DogancanYr, @Elderly-Emre, @Hweord - For the Turkish (Türkçe) translation corrections and revisions.
+@Nollasko - For the entirety of the Ukrainian (Українська) translation and revisions.
+@kilroy98 - For the Ukrainian (Українська) translation corrections and revisions.
