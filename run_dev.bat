@@ -4,8 +4,8 @@ set dirpath=%~dp0
 if "%dirpath:~-1%" == "\" set dirpath=%dirpath:~0,-1%
 set /p "choice=Start with a console? (y/n) "
 if "%choice%"=="y" (
-    set "exepath=%dirpath%\venv\scripts\python"
+    set "exepath=%dirpath%\venv\Scripts\python"
 ) else (
-    set "exepath=%dirpath%\venv\scripts\pythonw"
+    set "exepath=%dirpath%\venv\Scripts\pythonw"
 )
 start "TwitchDropsMiner" "%exepath%" "%dirpath%\main.py"

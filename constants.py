@@ -20,7 +20,9 @@ if TYPE_CHECKING:
 
 
 # True if we're running from a built EXE (or a Linux AppImage), False inside a dev build
-IS_APPIMAGE = "APPIMAGE" in os.environ and os.path.exists(os.environ["APPIMAGE"])
+IS_APPIMAGE = "APPIMAGE" in os.environ and os.path.exists(
+    os.environ["APPIMAGE"]
+)
 IS_PACKAGED = hasattr(sys, "_MEIPASS") or IS_APPIMAGE
 # logging special levels
 CALL: int = logging.INFO - 1
@@ -32,7 +34,9 @@ else:
     # On Linux, the site-packages path includes a versioned 'pythonX.Y' folder part
     # The Lib folder is also spelled in lowercase: 'lib'
     version_info = sys.version_info
-    SYS_SITE_PACKAGES = f"lib/python{version_info.major}.{version_info.minor}/site-packages"
+    SYS_SITE_PACKAGES = (
+        f"lib/python{version_info.major}.{version_info.minor}/site-packages"
+    )
 # scripts venv path changes depending on the system platform
 if sys.platform == "win32":
     SYS_SCRIPTS = "Scripts"
@@ -92,6 +96,21 @@ else:
     if SELF_PATH.stem == "pyinstaller" or SELF_PATH.name == "gui.py":
         SELF_PATH = Path(__file__).with_name("main.py").resolve()
 WORKING_DIR = SELF_PATH.parent
+# User data directory: on Windows prefer %APPDATA% to avoid writing next to the EXE
+if sys.platform == "win32":
+    _appdata = os.getenv("APPDATA")
+    if _appdata:
+        USER_DATA_DIR = Path(_appdata) / "TwitchDropsMiner"
+    else:
+        USER_DATA_DIR = WORKING_DIR
+else:
+    USER_DATA_DIR = WORKING_DIR
+# ensure the directory exists for persistent files
+try:
+    USER_DATA_DIR.mkdir(parents=True, exist_ok=True)
+except Exception:
+    # best-effort — if creation fails, fall back to WORKING_DIR
+    USER_DATA_DIR = WORKING_DIR
 # Development paths
 VENV_PATH = Path(WORKING_DIR, "env")
 SITE_PACKAGES_PATH = Path(VENV_PATH, SYS_SITE_PACKAGES)
@@ -100,13 +119,13 @@ SCRIPTS_PATH = Path(VENV_PATH, SYS_SCRIPTS)
 # NOTE: These don't have to be available to the end-user, so the path points to the internal dir
 LANG_PATH = _resource_path("lang")
 # Other Paths
-LOG_PATH = Path(WORKING_DIR, "log.txt")
-DUMP_PATH = Path(WORKING_DIR, "dump.dat")
-LOCK_PATH = Path(WORKING_DIR, "lock.file")
-CACHE_PATH = Path(WORKING_DIR, "cache")
+LOG_PATH = Path(USER_DATA_DIR, "log.txt")
+DUMP_PATH = Path(USER_DATA_DIR, "dump.dat")
+LOCK_PATH = Path(USER_DATA_DIR, "lock.file")
+CACHE_PATH = Path(USER_DATA_DIR, "cache")
 CACHE_DB = Path(CACHE_PATH, "mapping.json")
-COOKIES_PATH = Path(WORKING_DIR, "cookies.jar")
-SETTINGS_PATH = Path(WORKING_DIR, "settings.json")
+COOKIES_PATH = Path(USER_DATA_DIR, "cookies.jar")
+SETTINGS_PATH = Path(USER_DATA_DIR, "settings.json")
 # Typing
 JsonType = Dict[str, Any]
 URLType = NewType("URLType", str)
@@ -140,14 +159,18 @@ LOGGING_LEVELS = {
 }
 FILE_FORMATTER = logging.Formatter(
     "{asctime}.{msecs:03.0f}:\t{levelname:>7}:\t{message}",
-    style='{',
+    style="{",
     datefmt="%Y-%m-%d %H:%M:%S",
 )
-OUTPUT_FORMATTER = logging.Formatter("{levelname}: {message}", style='{', datefmt="%H:%M:%S")
+OUTPUT_FORMATTER = logging.Formatter(
+    "{levelname}: {message}", style="{", datefmt="%H:%M:%S"
+)
 
 
 class ClientInfo:
-    def __init__(self, client_url: URL, client_id: str, user_agents: str | list[str]) -> None:
+    def __init__(
+        self, client_url: URL, client_id: str, user_agents: str | list[str]
+    ) -> None:
         self.CLIENT_URL: URL = client_url
         self.CLIENT_ID: str = client_id
         self.USER_AGENT: str
@@ -203,7 +226,7 @@ class ClientType:
                 "Mozilla/5.0 (Linux; Android 16; LM-X420) AppleWebKit/537.36 "
                 "(KHTML, like Gecko) Chrome/138.0.7204.158 Mobile Safari/537.36"
             ),
-        ]
+        ],
     )
     ANDROID_APP = ClientInfo(
         URL("https://www.twitch.tv"),
@@ -237,7 +260,7 @@ class ClientType:
                 "Dalvik/2.1.0 (Linux; U; Android 14; SM-X306B Build/UP1A.231005.007) "
                 "tv.twitch.android.app/25.3.0/2503006"
             ),
-        ]
+        ],
     )
     SMARTBOX = ClientInfo(
         URL("https://android.tv.twitch.tv"),
@@ -275,12 +298,14 @@ class GQLQuery(JsonType):
                     "repository": "twilight",
                     "encoding": "GZIP_B64",
                 }
-            }
+            },
         )
 
 
 class GQLPersistedQuery(JsonType):
-    def __init__(self, name: str, sha256: str, *, variables: JsonType | None = None):
+    def __init__(
+        self, name: str, sha256: str, *, variables: JsonType | None = None
+    ):
         super().__init__(
             operationName=name,
             extensions={
@@ -288,7 +313,7 @@ class GQLPersistedQuery(JsonType):
                     "version": 1,
                     "sha256Hash": sha256,
                 }
-            }
+            },
         )
         if variables is not None:
             self.__setitem__("variables", variables)
@@ -347,7 +372,7 @@ GQL_QUERIES: dict[str, GQLPersistedQuery] = {
         "d86775d0ef16a63a33ad52e80eaff963b2d5b72fada7c991504a57496e1d8e4b",
         variables={
             "fetchRewardCampaigns": False,
-        }
+        },
     ),
     # returns current state of drops (current drop progress)
     "CurrentDrop": GQLPersistedQuery(
@@ -364,7 +389,7 @@ GQL_QUERIES: dict[str, GQLPersistedQuery] = {
         "5a4da2ab3d5b47c9f9ce864e727b2cb346af1e3ea8b897fe8f704a97ff017619",
         variables={
             "fetchRewardCampaigns": False,
-        }
+        },
     ),
     # returns extended information about a particular campaign
     "CampaignDetails": GQLPersistedQuery(
@@ -470,7 +495,10 @@ class WebsocketTopic:
 
     @classmethod
     def as_str(
-        cls, category: Literal["User", "Channel"], topic_name: str, target_id: int
+        cls,
+        category: Literal["User", "Channel"],
+        topic_name: str,
+        target_id: int,
     ) -> str:
         return f"{WEBSOCKET_TOPICS[category][topic_name]}.{target_id}"
 

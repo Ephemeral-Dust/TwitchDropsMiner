@@ -31,9 +31,9 @@ if not exist "%dirpath%\venv" (
 REM Activate the virtual environment and install requirements
 echo:
 echo Installing requirements.txt...
-"%dirpath%\venv\scripts\python" -m pip install -U pip
-"%dirpath%\venv\scripts\pip" install wheel
-"%dirpath%\venv\scripts\pip" install -r "%dirpath%\requirements.txt"
+"%dirpath%\venv\Scripts\python" -m pip install -U pip
+"%dirpath%\venv\Scripts\python" -m pip install wheel
+"%dirpath%\venv\Scripts\python" -m pip install -r "%dirpath%\requirements.txt"
 if %errorlevel% NEQ 0 (
     echo:
     echo Failed to install requirements.
