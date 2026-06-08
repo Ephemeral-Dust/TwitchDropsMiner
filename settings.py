@@ -23,6 +23,7 @@ class SettingsFile(TypedDict):
     enable_badges_emotes: bool
     available_drops_check: bool
     priority_mode: PriorityMode
+    auto_claim_drop: bool
 
 
 default_settings: SettingsFile = {
@@ -37,6 +38,7 @@ default_settings: SettingsFile = {
     "enable_badges_emotes": False,
     "available_drops_check": False,
     "priority_mode": PriorityMode.PRIORITY_ONLY,
+    "auto_claim_drop": True,
 }
 
 
@@ -61,11 +63,14 @@ class Settings:
     enable_badges_emotes: bool
     available_drops_check: bool
     priority_mode: PriorityMode
+    auto_claim_drop: bool
 
     PASSTHROUGH = ("_settings", "_args", "_altered")
 
     def __init__(self, args: ParsedArgs):
-        self._settings: SettingsFile = json_load(SETTINGS_PATH, default_settings)
+        self._settings: SettingsFile = json_load(
+            SETTINGS_PATH, default_settings
+        )
         self._args: ParsedArgs = args
         self._altered: bool = False
 
