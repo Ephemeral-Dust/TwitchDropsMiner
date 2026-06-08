@@ -33,21 +33,21 @@ Every several seconds, the application pretends to watch a particular stream by 
 
 ### Notes:
 
-> [!WARNING]  
-> Due to how Twitch handles the drop progression on their side, watching a stream in the browser (or by any other means) on the same account that is actively being used by the miner, will usually cause the miner to misbehave, reporting false progress and getting stuck mining the current drop.  
-> 
+> [!WARNING]
+> Due to how Twitch handles the drop progression on their side, watching a stream in the browser (or by any other means) on the same account that is actively being used by the miner, will usually cause the miner to misbehave, reporting false progress and getting stuck mining the current drop.
+>
 > Using the same account to watch other streams during mining is thus discouraged, in order to avoid any problems arising from it.
 
-> [!CAUTION]  
+> [!CAUTION]
 > Persistent cookies will be stored in the `cookies.jar` file, from which the authorization (login) information will be restored on each subsequent run. Make sure to keep your cookies file safe, as the authorization information it stores can give another person access to your Twitch account, even without them knowing your password!
 
-> [!IMPORTANT]  
+> [!IMPORTANT]
 > Successfully logging into your Twitch account in the application may cause Twitch to send you a "New Login" notification email. This is normal - you can verify that it comes from your own IP address. The detected browser during the login will be "Chrome", as that's what the miner currently presents itself to the Twitch server.
 
-> [!NOTE]  
+> [!NOTE]
 > The time remaining timer always countdowns a single minute and then stops - it is then restarted only after the application redetermines the remaining time. This "redetermination" can happen at any time Twitch decides to report on the drop's progress, but not later than 20 seconds after the timer reaches zero. The seconds timer is only an approximation and does not represent nor affect actual mining speed. The time variations are due to Twitch sometimes not reporting drop progress at all, or reporting progress for the wrong drop - these cases have all been accounted for in the application though.
 
-> [!NOTE]  
+> [!NOTE]
 > The source code requires Python 3.10 or higher to run.
 
 ### Notes about the Windows build:
@@ -65,20 +65,39 @@ Every several seconds, the application pretends to watch a particular stream by 
 - The size of the Linux app is significantly larger than the Windows app due to the inclusion of the `gtk3` library (and its dependencies), which is required for proper system tray/notifications support.
 - As an alternative to the native Linux app, you can run the Windows app via [Wine](https://www.winehq.org/) instead. It works really well!
 
+### Notes about the macOS build:
+
+- The macOS version is packaged using PyInstaller into a standalone `.app` bundle, distributed as a ZIP archive.
+- Since this application is not signed with a paid Apple Developer Certificate, **macOS Gatekeeper will block it** on the first run (saying it "The application is damaged and can't be opened").
+  - **To fix this**: Either open the Terminal in the folder the app is in (or navigating with `cd path/to/folder`) and enter `xattr -cr Twitch Drops Miner (by DevilXD).app` or just type `xattr -cr ` (make sure to put a space at the end), drag and drop the `Twitch Drops Miner (by DevilXD).app` file into the terminal window (this will auto-fill the path) and enter
+- Persistent files (like `cookies.jar`, `settings.json`, `lock.file` and the `cache` folder) are stored inside the application bundle in `Twitch Drops Miner (by DevilXD).app/Contents/MacOS` (to access them Right-click the application and select `Show Package Contents`)
+
 ### Advanced Usage:
 
 If you'd be interested in running the latest master from source or building your own executable, see the wiki page explaining how to do so: https://github.com/DevilXD/TwitchDropsMiner/wiki/Setting-up-the-environment,-building-and-running
 
+### Fork Integration Notes (2026-06-07):
+
+- Local Windows helper scripts were aligned to use `venv` (not `env`) in `setup_env.bat`, `build.bat`, and `run_dev.bat`.
+- `Auto claim drops` was added as a new General setting while keeping upstream Advanced settings intact.
+- Upstream badge/emote handling (`enable_badges_emotes`) and available drops validation (`available_drops_check`) were intentionally preserved.
+- When `Auto claim drops` is disabled, claim-ready drops are treated as complete for progression and can be claimed manually from the Inventory tab.
+- Manual claim support adds an explicit `Claim` button for claim-ready drops, plus a `ready_to_claim` status message path.
+
 ### Support
+
+If you'd encounter any issues with the miner:
+
+- Please see the [troubleshooting page](https://github.com/DevilXD/TwitchDropsMiner/wiki/Troubleshooting) for some common issues and their explanation.
+- Please [search the issues page](https://github.com/DevilXD/TwitchDropsMiner/issues?q=sort%3Aupdated-desc%20is%3Aissue) to see if your issue hasn't been reported yet.
+- If it's not been reported yet, feel free to open a new issue, describing your problem.
+
+If you like the application and found it useful, please consider donating a small amount of money to support me. Thank you!
 
 <div align="center">
 
-[![Buy me a coffee](https://i.imgur.com/cL95gzE.png)](
-    https://www.buymeacoffee.com/DevilXD
-)
-[![Support me on Patreon](https://i.imgur.com/Mdkb9jq.png)](
-    https://www.patreon.com/bePatron?u=26937862
-)
+[![Buy me a coffee](https://i.imgur.com/cL95gzE.png)](https://www.buymeacoffee.com/DevilXD)
+[![Support me on Patreon](https://i.imgur.com/Mdkb9jq.png)](https://www.patreon.com/bePatron?u=26937862)
 
 </div>
 
@@ -133,28 +152,33 @@ placed past the period character at the end.
 • Please ensure to leave a single empty new line at the end of the file.
 -->
 
-@guihkx - For the CI script, CI maintenance, and everything related to Linux builds.  
-@kWAYTV - For the implementation of the dark mode theme.  
+@guihkx - For the CI script, CI maintenance, and everything related to Linux builds.
+@kWAYTV - For the implementation of the dark mode theme.
+@crocchetto - For the macOS port.
 
-@Bamboozul - For the entirety of the Arabic (العربية) translation.  
-@Suz1e - For the entirety of the Chinese (简体中文) translation and revisions.  
-@wwj010 - For the Chinese (简体中文) translation corrections and revisions.  
-@zhangminghao1989 - For the Chinese (简体中文) translation corrections and revisions.  
-@Ricky103403 - For the entirety of the Traditional Chinese (繁體中文) translation.  
-@LusTerCsI - For the Traditional Chinese (繁體中文) translation corrections and revisions.  
-@nwvh - For the entirety of the Czech (Čeština) translation.  
-@Kjerne - For the entirety of the Danish (Dansk) translation.  
-@roobini-gamer - For the entirety of the French (Français) translation.  
-@Calvineries - For the French (Français) translation revisions.  
-@ThisIsCyreX - For the entirety of the German (Deutsch) translation.  
-@Eriza-Z - For the entirety of the Indonesian translation.  
-@casungo - For the entirety of the Italian (Italiano) translation.  
-@ShimadaNanaki - For the entirety of the Japanese (日本語) translation.  
-@Patriot99 - For the Polish (Polski) translation and revisions (co-authored with @DevilXD).  
-@zarigata - For the entirety of the Portuguese (Português) translation.  
-@Sergo1217 - For the entirety of the Russian (Русский) translation.  
-@kilroy98 - For the Russian (Русский) translation corrections and revisions.  
-@Shofuu - For the entirety of the Spanish (Español) translation and revisions.  
-@alikdb - For the entirety of the Turkish (Türkçe) translation.  
-@Nollasko - For the entirety of the Ukrainian (Українська) translation and revisions.  
-@kilroy98 - For the Ukrainian (Українська) translation corrections and revisions.  
+@Bamboozul - For the entirety of the Arabic (العربية) translation.
+@Suz1e - For the entirety of the Chinese (简体中文) translation and revisions.
+@wwj010, @zhangminghao1989, @Self4215 - For the Chinese (简体中文) translation corrections and revisions.
+@Ricky103403 - For the entirety of the Traditional Chinese (繁體中文) translation.
+@LusTerCsI - For the Traditional Chinese (繁體中文) translation corrections and revisions.
+@nwvh - For the entirety of the Czech (Čeština) translation.
+@Kjerne - For the entirety of the Danish (Dansk) translation.
+@lmdpocus - For the entirety of the Dutch (Nederlandse) translation.
+@Rensoraa - For the Traditional Dutch (Nederlandse) translation corrections and revisions.
+@roobini-gamer - For the entirety of the French (Français) translation.
+@Calvineries - For the French (Français) translation revisions.
+@ThisIsCyreX - For the entirety of the German (Deutsch) translation.
+@Eriza-Z - For the entirety of the Indonesian translation.
+@casungo - For the entirety of the Italian (Italiano) translation.
+@ShimadaNanaki - For the entirety of the Japanese (日本語) translation.
+@biroman - For the entirety of the Norwegian (Norsk) translation.
+@Patriot99 - For the Polish (Polski) translation and revisions (co-authored with @DevilXD).
+@zarigata - For the entirety of the Portuguese (Português) translation.
+@Sergo1217 - For the entirety of the Russian (Русский) translation.
+@kilroy98, @flamesv - For the Russian (Русский) translation corrections and revisions.
+@Shofuu - For the entirety of the Spanish (Español) translation and revisions.
+@Forero-0 - For the Spanish (Español) translation revisions.
+@alikdb - For the entirety of the Turkish (Türkçe) translation.
+@DogancanYr, @Elderly-Emre, @Hweord - For the Turkish (Türkçe) translation corrections and revisions.
+@Nollasko - For the entirety of the Ukrainian (Українська) translation and revisions.
+@kilroy98 - For the Ukrainian (Українська) translation corrections and revisions.

@@ -166,6 +166,14 @@ class GUISettingsGeneral(TypedDict):
     proxy: str
 
 
+class GUISettingsAdvanced(TypedDict):
+    name: str
+    warning: str
+    warning_text: str
+    enable_badges_emotes: str
+    available_drops_check: str
+
+
 class GUIPriorityModes(TypedDict):
     priority_only: str
     ending_soonest: str
@@ -174,6 +182,7 @@ class GUIPriorityModes(TypedDict):
 
 class GUISettings(TypedDict):
     general: GUISettingsGeneral
+    advanced: GUISettingsAdvanced
     priority_modes: GUIPriorityModes
     game_name: str
     priority: str
@@ -256,7 +265,7 @@ default_translation: Translation = {
     "error": {
         "captcha": "Your login attempt was denied by CAPTCHA.\nPlease try again in 12+ hours.",
         "site_down": "Twitch is down, retrying in {seconds} seconds...",
-        "no_connection": "Cannot connect to Twitch, retrying in {seconds} seconds...",
+        "no_connection": "Cannot connect to Twitch, retrying in {seconds} seconds... ({url})",
     },
     "gui": {
         "output": "Output",
@@ -365,9 +374,21 @@ default_translation: Translation = {
                 "tray": "Autostart into tray: ",
                 "tray_notifications": "Tray notifications: ",
                 "dark_mode": "Dark mode: ",
+                "auto_claim_drop": "Auto claim drops: ",
                 "priority_mode": "Priority mode: ",
                 "proxy": "Proxy (requires restart):",
                 "auto_claim_drop": "Auto claim drops: ",
+            },
+            "advanced": {
+                "name": "Advanced",
+                "warning": "Warning!",
+                "warning_text": (
+                    "These options will cause the miner to misbehave.\n"
+                    "If you're experiencing any issues, "
+                    "make sure all of these options are disabled."
+                ),
+                "enable_badges_emotes": "Enable partial support for badges and emotes: ",
+                "available_drops_check": "Enable extra available drops check: ",
             },
             "priority_modes": {
                 "priority_only": "Priority list only",

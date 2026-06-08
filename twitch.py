@@ -39,8 +39,6 @@ from utils import (
     RateLimiter,
     AwaitableValue,
     ExponentialBackoff,
-    game_name_in_list,
-    game_name_match_index,
 )
 from constants import (
     CALL,
@@ -48,7 +46,7 @@ from constants import (
     DUMP_PATH,
     COOKIES_PATH,
     MAX_CHANNELS,
-    GQL_OPERATIONS,
+    GQL_QUERIES,
     WATCH_INTERVAL,
     State,
     ClientType,
@@ -679,7 +677,7 @@ class Twitch:
                 self.save()
                 self.change_state(State.GAMES_UPDATE)
             elif self._state is State.GAMES_UPDATE:
-                # claim drops from expired and active campaigns (if auto claim is enabled)
+                # claim drops from expired and active campaigns
                 for campaign in self.inventory:
                     if not campaign.upcoming:
                         for drop in campaign.drops:
@@ -701,13 +699,8 @@ class Twitch:
                         sorted_campaigns.sort(key=lambda c: c.availability)
                 sorted_campaigns.sort(
                     key=lambda c: (
-                        _idx
-                        if (
-                            _idx := game_name_match_index(
-                                c.game.name, priority
-                            )
-                        )
-                        is not None
+                        priority.index(c.game.name)
+                        if c.game.name in priority
                         else MAX_INT
                     )
                 )
@@ -716,11 +709,8 @@ class Twitch:
                     if (
                         game not in self.wanted_games  # isn't already there
                         # and isn't excluded by list or priority mode
-                        and not game_name_in_list(game.name, exclude)
-                        and (
-                            not priority_only
-                            or game_name_in_list(game.name, priority)
-                        )
+                        and game.name not in exclude
+                        and (not priority_only or game.name in priority)
                         # and can be progressed within the next hour
                         and campaign.can_earn_within(next_hour)
                     ):
@@ -925,9 +915,7 @@ class Twitch:
                     for channel in sorted(
                         channels.values(), key=self.get_priority
                     ):
-                        if self.can_watch(channel) and self.should_switch(
-                            channel
-                        ):
+                        if self.should_switch(channel):
                             new_watching = channel
                             break
                 watching_channel = self.watching_channel.get_with_default(None)
@@ -996,7 +984,7 @@ class Twitch:
                 # Solution 1: use GQL to query for the currently mined drop status
                 try:
                     context = await self.gql_request(
-                        GQL_OPERATIONS["CurrentDrop"].with_variables(
+                        GQL_QUERIES["CurrentDrop"].with_variables(
                             {"channelID": str(channel.id)}
                         )
                     )
@@ -1088,18 +1076,19 @@ class Twitch:
         """
         Determines if the given channel qualifies as a watching candidate.
         """
-        if not self.wanted_games:
+        # exit early if stream is offline
+        if not channel.online:
             return False
-        # exit early if stream is offline or drops aren't enabled
-        if not channel.online or not channel.drops_enabled:
-            return False
-        # check if we can progress any campaign for the played game
-        channel_game_valid: bool = (
-            channel.game is not None and channel.game in self.wanted_games
-        )
         for campaign in self.inventory:
-            if campaign.can_earn(channel) and (
-                channel_game_valid or campaign.has_badge_or_emote
+            if campaign.can_earn(
+                channel
+            ) and (  # let the campaign do the "special games" check
+                # limit watching to the games the user wants
+                channel.game is not None
+                and channel.drops_enabled
+                and channel.game in self.wanted_games
+                # let the campaign ignore all channel-related checks
+                or campaign.game.is_special()
             ):
                 return True
         return False
@@ -1108,8 +1097,10 @@ class Twitch:
         """
         Determines if the given channel qualifies as a switch candidate.
         """
+        if not self.can_watch(channel):
+            return False
         watching_channel = self.watching_channel.get_with_default(None)
-        if watching_channel is None:
+        if watching_channel is None or not self.can_watch(watching_channel):
             return True
         channel_order = self.get_priority(channel)
         watching_order = self.get_priority(watching_channel)
@@ -1215,7 +1206,7 @@ class Twitch:
         if stream_before is None:
             if stream_after is not None:
                 # Channel going ONLINE
-                if self.can_watch(channel) and self.should_switch(channel):
+                if self.should_switch(channel):
                     # we can watch the channel, and we should
                     self.print(
                         _("status", "goes_online").format(channel=channel.name)
@@ -1261,8 +1252,8 @@ class Twitch:
                     f"(🎁: {stream_before.drops_enabled and '✔' or '❌'} -> "
                     f"{stream_after.drops_enabled and '✔' or '❌'})"
                 )
-                if self.can_watch(channel) and self.should_switch(channel):
-                    # ... and we can and should watch it
+                if self.should_switch(channel):
+                    # ... and we should watch it
                     self.watch(channel)
         channel.display()
 
@@ -1288,7 +1279,6 @@ class Twitch:
                 return
             drop.update_claim(message["data"]["drop_instance_id"])
             campaign = drop.campaign
-            # Always call claim to handle both auto_claim enabled/disabled cases
             await drop.claim()
             drop.display()
             # About 4-20s after claiming the drop, next drop can be started
@@ -1298,7 +1288,7 @@ class Twitch:
             if watching_channel is not None:
                 for attempt in range(8):
                     context = await self.gql_request(
-                        GQL_OPERATIONS["CurrentDrop"].with_variables(
+                        GQL_QUERIES["CurrentDrop"].with_variables(
                             {"channelID": str(watching_channel.id)}
                         )
                     )
@@ -1333,10 +1323,14 @@ class Twitch:
     async def process_notifications(self, user_id: int, message: JsonType):
         if message["type"] == "create-notification":
             data: JsonType = message["data"]["notification"]
-            if data["type"] == "user_drop_reward_reminder_notification":
+            if data["type"] in (
+                "user_drop_reward_reminder_notification",  # drop confirmation
+                "quests_viewer_reward_campaign_earned_emote",  # emote confirmation
+                # badge confirmation?
+            ):
                 self.change_state(State.INVENTORY_FETCH)
                 await self.gql_request(
-                    GQL_OPERATIONS["NotificationsDelete"].with_variables(
+                    GQL_QUERIES["NotificationsDelete"].with_variables(
                         {"input": {"id": data["id"]}}
                     )
                 )
@@ -1399,7 +1393,7 @@ class Twitch:
                     # just so that quick retries that sometimes happen, aren't shown
                     self.print(
                         _("error", "no_connection").format(
-                            seconds=round(delay)
+                            seconds=round(delay), url=str(url)
                         )
                     )
             finally:
@@ -1450,7 +1444,8 @@ class Twitch:
                     for error_dict in response_json["errors"]:
                         if "message" in error_dict:
                             if single_retry and error_dict["message"] in (
-                                "service error" "PersistedQueryNotFound"
+                                "service error",
+                                "PersistedQueryNotFound",
                             ):
                                 logger.error(
                                     f"Retrying a {error_dict['message']} for "
@@ -1522,7 +1517,7 @@ class Twitch:
         auth_state = await self.get_auth()
         response_list: list[JsonType] = await self.gql_request(
             [
-                GQL_OPERATIONS["CampaignDetails"].with_variables(
+                GQL_QUERIES["CampaignDetails"].with_variables(
                     {"channelLogin": str(auth_state.user_id), "dropID": cid}
                 )
                 for cid in campaign_ids
@@ -1540,7 +1535,7 @@ class Twitch:
         status_update = self.gui.status.update
         status_update(_("gui", "status", "fetching_inventory"))
         # fetch in-progress campaigns (inventory)
-        response = await self.gql_request(GQL_OPERATIONS["Inventory"])
+        response = await self.gql_request(GQL_QUERIES["Inventory"])
         inventory: JsonType = response["data"]["currentUser"]["inventory"]
         ongoing_campaigns: list[JsonType] = (
             inventory["dropCampaignsInProgress"] or []
@@ -1554,7 +1549,7 @@ class Twitch:
             c["id"]: c for c in ongoing_campaigns
         }
         # fetch general available campaigns data (campaigns)
-        response = await self.gql_request(GQL_OPERATIONS["Campaigns"])
+        response = await self.gql_request(GQL_QUERIES["Campaigns"])
         available_list: list[JsonType] = (
             response["data"]["currentUser"]["dropCampaigns"] or []
         )
@@ -1614,7 +1609,7 @@ class Twitch:
                 json.dump(dump_data, file, indent=4, sort_keys=True)
                 file.write("\n\n")  # add 2x new line spacer
                 json.dump(
-                    claimed_benefits,
+                    inventory["gameEventDrops"],
                     file,
                     indent=4,
                     sort_keys=True,
@@ -1708,7 +1703,7 @@ class Twitch:
             filters.append("DROPS_ENABLED")
         try:
             response = await self.gql_request(
-                GQL_OPERATIONS["GameDirectory"].with_variables(
+                GQL_QUERIES["GameDirectory"].with_variables(
                     {
                         "limit": limit,
                         "slug": game.slug,
@@ -1738,7 +1733,7 @@ class Twitch:
     async def bulk_check_online(self, channels: abc.Iterable[Channel]):
         """
         Utilize batch GQL requests to check ONLINE status for a lot of channels at once.
-        Also handles the drops_enabled check.
+        Also handles the drops_enabled check (if enabled).
         """
         acl_streams_map: dict[int, JsonType] = {}
         stream_gql_ops: list[GQLOperation] = [
@@ -1766,31 +1761,34 @@ class Twitch:
             raise
         # for all channels with an active stream, check the available drops as well
         acl_available_drops_map: dict[int, list[JsonType]] = {}
-        available_gql_ops: list[GQLOperation] = [
-            GQL_OPERATIONS["AvailableDrops"].with_variables(
-                {"channelID": str(channel_id)}
-            )
-            for channel_id, channel_data in acl_streams_map.items()
-            if channel_data["stream"]
-            is not None  # only do this for ONLINE channels
-        ]
-        available_gql_tasks: list[asyncio.Task[list[JsonType]]] = [
-            asyncio.create_task(self.gql_request(available_gql_chunk))
-            for available_gql_chunk in chunk(available_gql_ops, 20)
-        ]
-        try:
-            for coro in asyncio.as_completed(available_gql_tasks):
-                response_list = await coro
-                for response_json in response_list:
-                    available_info: JsonType = response_json["data"]["channel"]
-                    acl_available_drops_map[int(available_info["id"])] = (
-                        available_info["viewerDropCampaigns"] or []
-                    )
-        except Exception:
-            # asyncio.as_completed doesn't cancel tasks on errors
-            for task in available_gql_tasks:
-                task.cancel()
-            raise
+        if self.settings.available_drops_check:
+            available_gql_ops: list[GQLOperation] = [
+                GQL_QUERIES["AvailableDrops"].with_variables(
+                    {"channelID": str(channel_id)}
+                )
+                for channel_id, channel_data in acl_streams_map.items()
+                if channel_data["stream"]
+                is not None  # only do this for ONLINE channels
+            ]
+            available_gql_tasks: list[asyncio.Task[list[JsonType]]] = [
+                asyncio.create_task(self.gql_request(available_gql_chunk))
+                for available_gql_chunk in chunk(available_gql_ops, 20)
+            ]
+            try:
+                for coro in asyncio.as_completed(available_gql_tasks):
+                    response_list = await coro
+                    for response_json in response_list:
+                        available_info: JsonType = response_json["data"][
+                            "channel"
+                        ]
+                        acl_available_drops_map[int(available_info["id"])] = (
+                            available_info["viewerDropCampaigns"] or []
+                        )
+            except Exception:
+                # asyncio.as_completed doesn't cancel tasks on errors
+                for task in available_gql_tasks:
+                    task.cancel()
+                raise
         for channel in channels:
             channel_id = channel.id
             if channel_id not in acl_streams_map:
@@ -1798,7 +1796,7 @@ class Twitch:
             channel_data = acl_streams_map[channel_id]
             if channel_data["stream"] is None:
                 continue
-            available_drops: list[JsonType] = acl_available_drops_map[
-                channel_id
-            ]
+            available_drops: list[JsonType] = acl_available_drops_map.get(
+                channel_id, []
+            )
             channel.external_update(channel_data, available_drops)

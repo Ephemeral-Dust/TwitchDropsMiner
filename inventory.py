@@ -13,7 +13,7 @@ from translate import _
 from channel import Channel
 from utils import timestamp, Game
 from exceptions import GQLException
-from constants import GQL_OPERATIONS, MAX_EXTRA_MINUTES, URLType, State
+from constants import GQL_QUERIES, MAX_EXTRA_MINUTES, URLType, State
 
 if TYPE_CHECKING:
     from collections import abc
@@ -168,7 +168,6 @@ class BaseDrop:
             < self.campaign.ends_at + timedelta(hours=24)
         )
 
-        # Reset notification flag if drop can no longer be claimed
         if not can_claim_result and self._ready_to_claim_notified:
             self._ready_to_claim_notified = False
 
@@ -176,13 +175,9 @@ class BaseDrop:
 
     @property
     def is_complete(self) -> bool:
-        """
-        Returns True if the drop should be considered complete for progress tracking.
-        When auto_claim_drop is disabled, ready-to-claim drops are also considered complete.
-        """
         if self.is_claimed:
             return True
-        elif not self._twitch.settings.auto_claim_drop and self.can_claim:
+        if not self._twitch.settings.auto_claim_drop and self.can_claim:
             return True
         return False
 
@@ -201,14 +196,11 @@ class BaseDrop:
         return delim.join(benefit.name for benefit in self.benefits)
 
     async def claim(self, *, manual: bool = False) -> bool:
-        # Check if auto_claim is disabled and drop can be claimed
-        # Skip this check if manual=True (user clicked the claim button)
         if (
             not manual
             and not self._twitch.settings.auto_claim_drop
             and self.can_claim
         ):
-            # Only show ready_to_claim status if we haven't already notified
             if not self._ready_to_claim_notified:
                 claim_text = (
                     f"{self.campaign.game.name}\n"
@@ -224,14 +216,12 @@ class BaseDrop:
                     claim_text, _("gui", "tray", "notification_title")
                 )
                 self._ready_to_claim_notified = True
-            return False  # Don't claim, just notify
+            return False
 
         result = await self._claim()
         if result:
             self.is_claimed = result
-            self._ready_to_claim_notified = (
-                False  # Reset flag when actually claimed
-            )
+            self._ready_to_claim_notified = False
             claim_text = (
                 f"{self.campaign.game.name}\n"
                 f"{self.rewards_text()} "
@@ -263,7 +253,7 @@ class BaseDrop:
             return False
         try:
             response = await self._twitch.gql_request(
-                GQL_OPERATIONS["ClaimDrop"].with_variables(
+                GQL_QUERIES["ClaimDrop"].with_variables(
                     {"input": {"dropInstanceID": self.claim_id}}
                 )
             )
@@ -350,7 +340,6 @@ class TimedDrop(BaseDrop):
         elif self.current_minutes >= self.required_minutes:
             return 1.0
         elif self.is_complete:
-            # When drop is considered complete (includes ready-to-claim when auto_claim is disabled)
             return 1.0
         return self.current_minutes / self.required_minutes
 
@@ -380,11 +369,7 @@ class TimedDrop(BaseDrop):
         self._twitch.gui.inv.update_drop(self)
 
     def _update_real_minutes(self, delta: int) -> None:
-        if (
-            delta == 0
-            or self.real_current_minutes + delta < 0
-            or not self.can_earn()
-        ):
+        if delta == 0 or self.real_current_minutes + delta < 0:
             return
         if self.real_current_minutes + delta < self.required_minutes:
             self.real_current_minutes += delta
@@ -442,9 +427,6 @@ class DropsCampaign:
         self.starts_at: datetime = timestamp(data["startAt"])
         self.ends_at: datetime = timestamp(data["endAt"])
         self._valid: bool = data["status"] != "EXPIRED"
-
-        # Check if this is an emote drop campaign that should be ignored
-        self._is_emote_campaign: bool = self._detect_emote_campaign(data)
         allowed: JsonType = data["allow"]
         self.allowed_channels: list[Channel] = (
             [
@@ -461,28 +443,6 @@ class DropsCampaign:
 
     def __repr__(self) -> str:
         return f"Campaign({self.game!s}, {self.name}, {self.claimed_drops}/{self.total_drops})"
-
-    def _detect_emote_campaign(self, data: JsonType) -> bool:
-        """
-        Detect if this is a Twitch emote drop campaign that should be ignored.
-        Emote campaigns typically link to Twitch's emote help page.
-        """
-        details_url = data.get("detailsURL", "")
-        account_link_url = data.get("accountLinkURL", "")
-
-        # Check if either URL points to Twitch's emote help page
-        emote_help_indicators = [
-            "how-to-use-emotes",
-            "article/emotes",
-            "twitch.tv/s/article/how-to-use-emotes",
-        ]
-
-        for indicator in emote_help_indicators:
-            if indicator in details_url or indicator in account_link_url:
-                logger.info(f"Detected emote campaign, ignoring: {self.name}")
-                return True
-
-        return False
 
     @property
     def drops(self) -> abc.Iterable[TimedDrop]:
@@ -518,7 +478,9 @@ class DropsCampaign:
 
     @property
     def eligible(self) -> bool:
-        return self.linked or self.has_badge_or_emote
+        if self.has_badge_or_emote:
+            return self._twitch.settings.enable_badges_emotes
+        return self.linked
 
     @cached_property
     def has_badge_or_emote(self) -> bool:
@@ -530,10 +492,6 @@ class DropsCampaign:
 
     @property
     def finished(self) -> bool:
-        # Emote campaigns are always considered finished (ignored)
-        if self._is_emote_campaign:
-            return True
-
         return all(
             d.is_complete or d.required_minutes <= 0 for d in self.drops
         )
@@ -596,12 +554,13 @@ class DropsCampaign:
                         not self.allowed_channels
                         or channel in self.allowed_channels
                     )
-                    # and the channel is live and playing the campaign's game
+                    # and the channel is live and playing the campaign's game,
+                    # or this campaign can be earned anywhere (special game)
                     and (
                         ignore_channel_status
                         or channel.game is not None
                         and channel.game == self.game
-                        or self.has_badge_or_emote
+                        or self.game.is_special()
                     )
                 )
             )
@@ -624,11 +583,7 @@ class DropsCampaign:
         channel: Channel | None = None,
         ignore_channel_status: bool = False,
     ) -> bool:
-        # Emote campaigns cannot be earned (always ignored)
-        if self._is_emote_campaign:
-            return False
-
-        # True if any of the containing drops can be earned and is not complete
+        # True if any of the containing drops can be earned
         return self._base_can_earn(channel, ignore_channel_status) and any(
             drop._base_can_earn() and not drop.is_complete
             for drop in self.drops
@@ -637,11 +592,6 @@ class DropsCampaign:
     def can_earn_within(self, stamp: datetime) -> bool:
         # Same as can_earn, but doesn't check the channel
         # and uses a future timestamp to see if we can earn this campaign later
-
-        # Emote campaigns cannot be earned (always ignored)
-        if self._is_emote_campaign:
-            return False
-
         return (
             self.eligible
             and self._valid
