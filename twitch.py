@@ -663,8 +663,22 @@ class Twitch:
                 self.gui.tray.change_icon("idle")
                 self.gui.status.update(_("gui", "status", "idle"))
                 self.stop_watching()
-                # clear the flag and wait until it's set again
-                self._state_change.clear()
+                # Periodically re-check channels in IDLE
+                while self._state is State.IDLE:
+                    self._state_change.clear()
+                    if any(
+                        self.can_watch(channel)
+                        for channel in channels.values()
+                    ):
+                        self.change_state(State.CHANNEL_SWITCH)
+                        break
+                    try:
+                        await asyncio.wait_for(
+                            self._state_change.wait(), timeout=30
+                        )
+                        break
+                    except asyncio.TimeoutError:
+                        continue
             elif self._state is State.INVENTORY_FETCH:
                 self.gui.tray.change_icon("maint")
                 # ensure the websocket is running
@@ -961,8 +975,10 @@ class Twitch:
         while True:
             channel: Channel = await self.watching_channel.get()
             if not channel.online:
-                # if the channel isn't online anymore, we stop watching it
+                # if the channel isn't online anymore, stop watching and
+                # trigger the state machine to find a new channel
                 self.stop_watching()
+                self.change_state(State.CHANNEL_SWITCH)
                 continue
             # logger.log(CALL, f"Sending watch payload to: {channel.name}")
             succeeded: bool = await channel.send_watch()
@@ -1206,7 +1222,10 @@ class Twitch:
         if stream_before is None:
             if stream_after is not None:
                 # Channel going ONLINE
-                if self.should_switch(channel):
+                # Wake up from IDLE if we can now watch this channel
+                if self._state is State.IDLE:
+                    self.change_state(State.CHANNEL_SWITCH)
+                elif self.should_switch(channel):
                     # we can watch the channel, and we should
                     self.print(
                         _("status", "goes_online").format(channel=channel.name)
