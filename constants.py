@@ -147,6 +147,48 @@ PING_INTERVAL = timedelta(minutes=3)
 PING_TIMEOUT = timedelta(seconds=10)
 ONLINE_DELAY = timedelta(seconds=120)
 WATCH_INTERVAL = timedelta(seconds=20)
+# Mining-method fallback tiers: iteration order is preference order,
+# front tier tried first and kept until the health monitor in twitch.py
+# proves it no longer advances drop progress server-side. All three are
+# emulations of how a real viewer's watch time gets counted:
+#   PLAYLIST_HEAD  - HEAD requests on stream playlist chunks (CDN counts them)
+#   SPADE_POST     - direct POSTs to the spade telemetry endpoint the web
+#                    player heartbeats to (URL is scraped from page/JS bundles,
+#                    which makes this method the most structurally fragile)
+#   GQL_MUTATION   - the minute-watched GraphQL mutation (a wrapper around
+#                    the same spade backend; historically the first thing
+#                    Twitch stopped counting - see DevilXD/TwitchDropsMiner
+#                    issue #1099 for the whole flip-flop saga)
+class WatchTier(Enum):
+    PLAYLIST_HEAD = auto()
+    SPADE_POST = auto()
+    GQL_MUTATION = auto()
+
+
+# Per-tier send cadence in seconds: the chunk list only covers ~30 seconds of
+# stream, so playlist wants a tight loop; spade/GQL count whole wall-clock
+# minutes and want roughly one send per minute.
+WATCH_TIER_INTERVALS = {
+    WatchTier.PLAYLIST_HEAD: WATCH_INTERVAL.total_seconds(),
+    WatchTier.SPADE_POST: 59.0,
+    WatchTier.GQL_MUTATION: 59.0,
+}
+# How much confirmed mining time without ANY server-side minute delta we
+# tolerate before demoting the active tier. Server-side minutes tick at most
+# once per real minute and Twitch reports them in bursts (see README notes on
+# redetermination lag), so this window must stay above ~3 probe intervals to
+# avoid flapping on reporting jitter alone.
+WATCH_TIER_STALL_WINDOW = timedelta(minutes=5)
+# How long an OPEN (demoted) tier waits before it may be retried as a
+# HALF_OPEN probe attempt. Doubles on every failure up to the cap, so a method
+# Twitch broke today gets retried once in 6 hours, then 12, then 24 at most -
+# slow enough that no oscillation is possible even if Twitch keeps flip-flopping.
+WATCH_TIER_COOLDOWN_BASE = timedelta(hours=6)
+WATCH_TIER_COOLDOWN_MAX = timedelta(hours=24)
+# Spade/GQL talk to user-level endpoints that don't depend on the stream being
+# ONLINE, so this many consecutive send failures means the method itself is
+# dead - demote immediately without waiting for the full stall window.
+WATCH_TIER_TRANSPORT_FAIL_LIMIT = 5
 # Strings
 WINDOW_TITLE = f"Twitch Drops Miner v{__version__} (by DevilXD)"
 # Logging

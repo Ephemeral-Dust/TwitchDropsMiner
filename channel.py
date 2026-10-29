@@ -14,7 +14,7 @@ from yarl import URL
 
 from utils import Game, json_minify, isonow
 from exceptions import MinerException, RequestException
-from constants import CALL, GQL_QUERIES, ONLINE_DELAY, URLType, GQLQuery
+from constants import CALL, GQL_QUERIES, ONLINE_DELAY, URLType, GQLQuery, WatchTier
 
 if TYPE_CHECKING:
     from twitch import Twitch
@@ -428,8 +428,35 @@ class Channel:
         if needs_display:
             self.display()
 
-    # async def _send_watch_playlist(self) -> bool:
     async def send_watch(self) -> bool:
+        """
+        Sends one round of watch traffic using the mining method currently
+        active in Twitch's tier-breaker state machine (see Twitch.watch_tier).
+        All three methods stay implemented; the health monitor simply moves
+        down this chain (playlist -> spade -> gql) as each one stops counting.
+        """
+        tier = self._twitch.watch_tier
+        if tier is WatchTier.SPADE_POST:
+            try:
+                return await self._send_watch_spade()
+            except RequestException:
+                # transient network/endpoint failure, counted by the monitor
+                return False
+            except MinerException as exc:
+                # spade_url extraction failed: the page or settings-bundle
+                # layout changed, meaning this method is structurally dead
+                # until the scraping patterns are updated - demote right away
+                # instead of waiting out the stall window
+                logger.error(
+                    f"Spade URL extraction failed for channel: {self._login} ({exc})"
+                )
+                self._twitch.report_watch_tier_failure(WatchTier.SPADE_POST)
+                return False
+        elif tier is WatchTier.GQL_MUTATION:
+            return await self._send_watch_gql()
+        return await self._send_watch_playlist()
+
+    async def _send_watch_playlist(self) -> bool:
         """
         This performs a HEAD request on the stream's current playlist,
         to simulate watching the stream.
@@ -495,7 +522,6 @@ class Channel:
         except RequestException:
             return False
 
-    # NOTE: This is currently unused.
     async def _send_watch_gql(self) -> bool:
         if self._stream is None:
             return False

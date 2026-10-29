@@ -49,7 +49,12 @@ from constants import (
     COOKIES_PATH,
     MAX_CHANNELS,
     GQL_QUERIES,
-    WATCH_INTERVAL,
+    WATCH_TIER_INTERVALS,
+    WATCH_TIER_STALL_WINDOW,
+    WATCH_TIER_COOLDOWN_BASE,
+    WATCH_TIER_COOLDOWN_MAX,
+    WATCH_TIER_TRANSPORT_FAIL_LIMIT,
+    WatchTier,
     State,
     ClientType,
     PriorityMode,
@@ -556,6 +561,18 @@ class Twitch:
         self.watching_channel: AwaitableValue[Channel] = AwaitableValue()
         self._watching_task: asyncio.Task[None] | None = None
         self._watching_restart = asyncio.Event()
+        # Mining-method health monitor (tier-breaker circuit breaker state machine)
+        self._watch_tier: WatchTier = WatchTier.PLAYLIST_HEAD
+        self._tier_cooldowns: dict[WatchTier, float] = {t: 0.0 for t in WatchTier}
+        self._tier_strikes: dict[WatchTier, int] = {t: 0 for t in WatchTier}
+        self._tier_mined_stall: float = 0.0
+        self._tier_fail_streak: int = 0
+        # last authoritative server-side reading seen, as a (drop_id, minutes)
+        # tuple; any strictly-greater minutes value under the same drop ID
+        # proves whatever method we're sending through IS counting server-side
+        self._oracle_anchor: tuple[str, int] | None = None
+        self._last_demoted_tier: WatchTier | None = None
+        self._watch_tiers_all_open: bool = False
         # Websocket
         self.websocket = WebsocketPool(self)
         # Maintenance task
@@ -1058,9 +1075,147 @@ class Twitch:
                 self._watching_restart.wait(), timeout=delay
             )
 
+    ###############################
+    # MINING-METHOD TIER BREAKERS #
+    ###############################
+
+    @property
+    def watch_tier(self) -> WatchTier:
+        """The mining method currently in use, picked by the tier state machine."""
+        return self._watch_tier
+
+    def _pick_watch_tier(self) -> WatchTier:
+        """
+        Determines which mining tier should be active right now.
+        Tiers still cooling down (circuit breaker OPEN) are skipped; a tier
+        whose cooldown has expired becomes a HALF_OPEN probe attempt simply by
+        re-entering this list - the stall window below decides its fate.
+        """
+        now = time()
+        for tier in WatchTier:  # enum iteration order is the preference order
+            if now >= self._tier_cooldowns[tier]:
+                return tier
+        # Every method is cooling down at once: keep sending through the most
+        # recently demoted one anyway. This is the "Twitch-side issue" mode
+        # matching DevilXD/TwitchDropsMiner issue #1099 - back then some users
+        # saw frozen progress even while watching in real Chrome, so no method
+        # we control could have been at fault; churning harder would only add
+        # requests without gaining anything.
+        return self._last_demoted_tier or WatchTier.PLAYLIST_HEAD
+
+    def _set_watch_tier(self, tier: WatchTier) -> None:
+        if tier is self._watch_tier:
+            return
+        logger.log(CALL, f"Switching mining method to: {tier.name.lower()}")
+        self._watch_tier = tier
+        # fresh health window and failure streak for the newly active method
+        self._tier_mined_stall = 0.0
+        self._tier_fail_streak = 0
+        if tier is WatchTier.SPADE_POST:
+            # Force a fresh spade_url re-extraction on every channel: the stored
+            # URL may be stale from an old stream session, and its scraping
+            # patterns are the most fragile part of this whole mining method.
+            for channel in self.channels.values():
+                channel._spade_url = None
+
+    def _watch_tier_update(self) -> None:
+        """Runs the tier-breaker state machine once per watch loop cycle."""
+        self._set_watch_tier(self._pick_watch_tier())
+        all_open = (
+            self._last_demoted_tier is not None
+            and all(time() < cooldown for cooldown in self._tier_cooldowns.values())
+        )
+        if all_open is not self._watch_tiers_all_open:
+            self._watch_tiers_all_open = all_open
+            if all_open:
+                logger.warning(
+                    "No mining method is currently advancing drop progress "
+                    "server-side - this is usually a Twitch-side issue; watch "
+                    "time padding is disabled until an authoritative reading "
+                    "confirms real progress again"
+                )
+
+    def _demote_watch_tier(self, tier: WatchTier, reason: str) -> None:
+        """Opens the circuit breaker of a mining tier that stopped counting."""
+        strikes = self._tier_strikes[tier] + 1
+        self._tier_strikes[tier] = strikes
+        cooldown = min(
+            WATCH_TIER_COOLDOWN_BASE * (2 ** (strikes - 1)),
+            WATCH_TIER_COOLDOWN_MAX,
+        )
+        self._tier_cooldowns[tier] = time() + cooldown.total_seconds()
+        self._last_demoted_tier = tier
+        logger.error(
+            f"Mining method {tier.name.lower()} stopped advancing drop progress "
+            f"server-side ({reason}); cooling it down for "
+            f"{int(cooldown.total_seconds() // 60)} minutes"
+        )
+        self._set_watch_tier(self._pick_watch_tier())
+        # restart the health window unconditionally: when every tier is cooling
+        # and we land on the same (last-demoted) one, _set_watch_tier returns
+        # early, and without this reset the stall clock would stay above the
+        # window and re-demote on every single watch cycle
+        self._tier_mined_stall = 0.0
+
+    def report_watch_tier_failure(self, tier: WatchTier) -> None:
+        """
+        Immediate demote request from a mining method that detected its own
+        structural failure (e.g. the spade_url scraping patterns no longer
+        match anything), skipping the usual stall-window wait.
+        """
+        self._demote_watch_tier(tier, "structural failure detected")
+
+    def _feed_watch_oracle(self, drop_id: str, minutes: int) -> None:
+        """
+        Reports an authoritative server-side progress reading to the health
+        monitor. Only genuine readings belong here (websocket drop-progress
+        payloads and the CurrentDrop GQL probe), never bump_minutes() padding.
+        """
+        anchor = self._oracle_anchor
+        if anchor is None or anchor[0] != drop_id:
+            # First reading ever, or the monitored drop changed (a claim or a
+            # switch to the next drop): open a fresh window for the new drop,
+            # so legitimate completion never looks like a stall.
+            self._oracle_anchor = (drop_id, minutes)
+            self._tier_mined_stall = 0.0
+            return
+        if anchor[1] < minutes:
+            # Real server-side movement: the active method is confirmed working.
+            self._oracle_anchor = (drop_id, minutes)
+            self._tier_mined_stall = 0.0
+            tier = self._watch_tier
+            self._tier_strikes[tier] = 0
+            self._tier_cooldowns[tier] = 0.0
+            # A confirmed success also lets us leave "Twitch-side issue" mode:
+            # the next state machine tick will pull us back up the preference
+            # order to the best currently-available tier, free of charge.
+        # Equal or lower minutes under the same drop ID means zero delta; the
+        # stall clock keeps accumulating inside _watch_loop, which is where a
+        # demote decision gets made - not here, on any single missing reading.
+
+    def _watch_tier_health_tick(
+        self, channel: Channel, cycle_time: float
+    ) -> None:
+        """Accumulates confirmed-mining time; demotes the tier once the stall window is exceeded."""
+        if self._oracle_anchor is None:
+            # No authoritative reading ever received - zero delta proves nothing yet
+            return
+        # Only count mining time while an active drop exists on this channel that
+        # could advance; without one, absent server-side deltas are expected and
+        # prove nothing about the current mining method.
+        if self.get_active_campaign(channel) is None:
+            return
+        self._tier_mined_stall += cycle_time
+        window = WATCH_TIER_STALL_WINDOW.total_seconds()
+        if self._tier_mined_stall >= window:
+            self._demote_watch_tier(
+                self._watch_tier,
+                f"no server-side progress delta within "
+                f"{int(window // 60)} minutes of confirmed mining",
+            )
+
     @task_wrapper(critical=True)
     async def _watch_loop(self) -> NoReturn:
-        interval: float = WATCH_INTERVAL.total_seconds()
         while True:
             channel: Channel = await self.watching_channel.get()
             if not channel.online:
@@ -1070,12 +1225,36 @@ class Twitch:
                 self.change_state(State.CHANNEL_SWITCH)
                 continue
             # logger.log(CALL, f"Sending watch payload to: {channel.name}")
-            last_sent: float = time()
+            # Keep the mining-method state machine current: this is where tiers
+            # whose cooldown has expired re-enter as HALF_OPEN probe attempts.
+            self._watch_tier_update()
+            interval: float = WATCH_TIER_INTERVALS[self._watch_tier]
+            cycle_start: float = time()
+            last_sent: float = cycle_start
             succeeded: bool = await channel.send_watch()
             if not succeeded:
                 logger.log(CALL, f"Watch requested failed for channel: {channel.name}")
-            # wait ~15 seconds for a progress update
-            await asyncio.sleep(15 - min(time() - last_sent, 15))
+                self._tier_fail_streak += 1
+                # Spade and GQL talk to user-level endpoints that don't depend
+                # on the stream being ONLINE, so repeated failures there mean
+                # the method itself is dead. Playlist failures are mostly just
+                # the stream going offline noise, already handled by the online
+                # check above - that tier only demotes on its stall window.
+                if (
+                    self._watch_tier is not WatchTier.PLAYLIST_HEAD
+                    and self._tier_fail_streak
+                    >= WATCH_TIER_TRANSPORT_FAIL_LIMIT
+                ):
+                    self._demote_watch_tier(
+                        self._watch_tier, "endpoint kept failing"
+                    )
+            else:
+                self._tier_fail_streak = 0
+            # wait ~15 seconds for a progress update; slower-tier cadences get
+            # a proportionally shorter wait here and fill the remainder in the
+            # _watch_sleep call at the end of this cycle
+            short_wait: float = min(15.0, interval)
+            await asyncio.sleep(short_wait - min(time() - last_sent, short_wait))
             if self.gui.progress.minute_almost_done():
                 # If the previous update was more than ~60s ago, and the progress tracker
                 # isn't counting down anymore, that means Twitch has temporarily
@@ -1104,6 +1283,9 @@ class Twitch:
                         gql_drop.update_minutes(
                             drop_data["currentMinutesWatched"]
                         )
+                        self._feed_watch_oracle(
+                            gql_drop.id, drop_data["currentMinutesWatched"]
+                        )
                         drop_text: str = (
                             f"{gql_drop.name} ({gql_drop.campaign.game}, "
                             f"{gql_drop.current_minutes}/{gql_drop.required_minutes})"
@@ -1116,7 +1298,17 @@ class Twitch:
                 # Solution 2: If GQL fails, figure out which campaign we're most likely mining
                 # right now, and then bump up the minutes on it's drops
                 if not handled:
-                    if (
+                    if self._watch_tiers_all_open:
+                        # "Twitch-side issue" mode: never fabricate watch time
+                        # here, as padded minutes could complete a drop whose
+                        # time the server never actually counted for us - that
+                        # is exactly the false-completion-and-switch behavior
+                        # complained about in DevilXD/TwitchDropsMiner #1099
+                        logger.log(
+                            CALL,
+                            "Not padding watch time: all mining methods are cooling down",
+                        )
+                    elif (
                         active_campaign := self.get_active_campaign(channel)
                     ) is not None:
                         active_campaign.bump_minutes(channel)
@@ -1140,6 +1332,11 @@ class Twitch:
             await self._watch_sleep(
                 interval - min(time() - last_sent, interval)
             )
+            # Feed the confirmed mining time of this whole cycle into the
+            # mining-method health monitor. Any authoritative delta received
+            # during it (websocket or GQL probe) has already reset this clock;
+            # only silence keeps it running toward a tier demotion.
+            self._watch_tier_health_tick(channel, time() - cycle_start)
 
     @task_wrapper(critical=True)
     async def _maintenance_task(self) -> None:
@@ -1424,6 +1621,9 @@ class Twitch:
         ):
             # the received payload is for the drop we expected
             drop.update_minutes(message["data"]["current_progress_min"])
+            self._feed_watch_oracle(
+                drop_id, message["data"]["current_progress_min"]
+            )
 
     @task_wrapper
     async def process_notifications(self, user_id: int, message: JsonType):
