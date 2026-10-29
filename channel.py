@@ -38,13 +38,12 @@ class Stream:
         self.channel: Channel = channel
         self.broadcast_id = int(id)
         self.viewers: int = viewers
-        self.drops_enabled: bool = (
-            not channel._twitch.settings.available_drops_check
-        )
+        self.drops_enabled: bool = not channel._twitch.settings.available_drops_check
         self.game: Game | None = Game(game) if game else None
         self.title: str = title
         self._stream_url: URLType | None = None
 
+    @cached_property
     def _watch_payload(self) -> list[JsonType]:
         return [
             {
@@ -55,9 +54,7 @@ class Stream:
                     "channel": self.channel._login,
                     "client_time": isonow(),
                     "game": self.game.name if self.game is not None else "",
-                    "game_id": (
-                        str(self.game.id) if self.game is not None else ""
-                    ),
+                    "game_id": str(self.game.id) if self.game is not None else "",
                     "hidden": False,
                     "is_live": True,
                     "live": True,
@@ -65,16 +62,14 @@ class Stream:
                     "minutes_logged": 1,
                     "muted": False,
                     "user_id": self.channel._twitch._auth_state.user_id,
-                },
+                }
             }
         ]
 
     @cached_property
     def spade_payload(self) -> JsonType:
         return {
-            "data": (
-                b64encode(json_minify(self._watch_payload()).encode("utf8"))
-            ).decode("utf8")
+            "data": (b64encode(json_minify(self._watch_payload).encode("utf8"))).decode("utf8")
         }
 
     @cached_property
@@ -85,16 +80,12 @@ class Stream:
                 "{\n sendSpadeEvents(input: $input) {\n statusCode\n}\n}\n"
             ),
             b64encode(
-                gzip.compress(
-                    json_minify(self._watch_payload()).encode("utf8")
-                )
-            ).decode("utf8"),
+                gzip.compress(json_minify(self._watch_payload).encode("utf8"))
+            ).decode("utf8")
         )
 
     @classmethod
-    def from_get_stream(
-        cls, channel: Channel, channel_data: JsonType
-    ) -> Stream:
+    def from_get_stream(cls, channel: Channel, channel_data: JsonType) -> Stream:
         stream = channel_data["stream"]
         settings = channel_data["broadcastSettings"]
         return cls(
@@ -107,18 +98,12 @@ class Stream:
 
     @classmethod
     def from_directory(
-        cls,
-        channel: Channel,
-        channel_data: JsonType,
-        *,
-        drops_enabled: bool = False,
+        cls, channel: Channel, channel_data: JsonType, *, drops_enabled: bool = False
     ) -> Stream:
         self = cls(
             channel,
             id=channel_data["id"],
-            game=channel_data[
-                "game"
-            ],  # has to be there since we searched with it
+            game=channel_data["game"],  # has to be there since we searched with it
             viewers=channel_data["viewersCount"],
             title=channel_data["title"],
         )
@@ -134,20 +119,14 @@ class Stream:
         if self._stream_url is not None:
             return self._stream_url
         # get the stream playback access token from GQL
-        playback_token_response: JsonType = (
-            await self.channel._twitch.gql_request(
-                GQL_QUERIES["PlaybackAccessToken"].with_variables(
-                    {"login": self.channel._login}
-                )
-            )
+        playback_token_response: JsonType = await self.channel._twitch.gql_request(
+            GQL_QUERIES["PlaybackAccessToken"].with_variables({"login": self.channel._login})
         )
-        token_data: JsonType = playback_token_response["data"][
-            "streamPlaybackAccessToken"
-        ]
+        token_data: JsonType = playback_token_response["data"]["streamPlaybackAccessToken"]
         token_value = token_data["value"]
         token_signature = token_data["signature"]
         # using the token, query Twitch for a list of all available stream qualities
-        available_qualities: str = ""
+        available_qualities: str = ''
         try:
             async with self.channel._twitch.request(
                 "GET",
@@ -168,15 +147,11 @@ class Stream:
                 if isinstance(available_json, list):
                     available_json = available_json[0]
                 if "error" in available_json:
-                    logger.error(
-                        f"Stream URL get error: \"{available_json['error']}\""
-                    )
+                    logger.error(f"Stream URL get error: \"{available_json['error']}\"")
                     self.channel.set_offline()
                 return None
             # pick the last URL from the list, usually with the lowest quality stream
-            self._stream_url = cast(
-                URLType, URL(available_qualities.strip().split("\n")[-1])
-            )
+            self._stream_url = cast(URLType, URL(available_qualities.strip().split("\n")[-1]))
         except (aiohttp.InvalidURL, ValueError):
             self.channel._twitch.print(available_qualities)
             raise
@@ -185,15 +160,8 @@ class Stream:
 
 class Channel:
     __slots__ = (
-        "_twitch",
-        "_gui_channels",
-        "id",
-        "_login",
-        "_display_name",
-        "_spade_url",
-        "_stream",
-        "_pending_stream_up",
-        "acl_based",
+        "_twitch", "_gui_channels", "id", "_login", "_display_name", "_spade_url",
+        "_stream", "_pending_stream_up", "acl_based"
     )
 
     def __init__(
@@ -235,14 +203,9 @@ class Channel:
     ) -> Channel:
         channel = data["broadcaster"]
         self = cls(
-            twitch,
-            id=channel["id"],
-            login=channel["login"],
-            display_name=channel["displayName"],
+            twitch, id=channel["id"], login=channel["login"], display_name=channel["displayName"]
         )
-        self._stream = Stream.from_directory(
-            self, data, drops_enabled=drops_enabled
-        )
+        self._stream = Stream.from_directory(self, data, drops_enabled=drops_enabled)
         return self
 
     def __repr__(self) -> str:
@@ -262,9 +225,7 @@ class Channel:
 
     @property
     def stream_gql(self) -> GQLPersistedQuery:
-        return GQL_QUERIES["GetStreamInfo"].with_variables(
-            {"channel": self._login}
-        )
+        return GQL_QUERIES["GetStreamInfo"].with_variables({"channel": self._login})
 
     @property
     def name(self) -> str:
@@ -345,9 +306,7 @@ class Channel:
 
         For mobile view, spade_url is available immediately from the page, skipping step #2.
         """
-        SETTINGS_PATTERN: str = (
-            r'src="(https://[\w.]+/config/settings\.[0-9a-f]{32}\.js)"'
-        )
+        SETTINGS_PATTERN: str = r'src="(https://[\w.]+/config/settings\.[0-9a-f]{32}\.js)"'
         SPADE_PATTERN: str = r'"spade_?url": ?"(https://[.\w\-/]+)"'
         async with self._twitch.request("GET", self.url) as response1:
             streamer_html: str = await response1.text(encoding="utf8")
@@ -355,34 +314,25 @@ class Channel:
         if not match:
             match = re.search(SETTINGS_PATTERN, streamer_html, re.I)
             if not match:
-                raise MinerException(
-                    "Error while spade_url extraction: step #1"
-                )
+                raise MinerException("Error while spade_url extraction: step #1")
             streamer_settings = match.group(1)
-            async with self._twitch.request(
-                "GET", streamer_settings
-            ) as response2:
+            async with self._twitch.request("GET", streamer_settings) as response2:
                 settings_js: str = await response2.text(encoding="utf8")
             match = re.search(SPADE_PATTERN, settings_js, re.I)
             if not match:
-                raise MinerException(
-                    "Error while spade_url extraction: step #2"
-                )
+                raise MinerException("Error while spade_url extraction: step #2")
         return URLType(match.group(1))
 
     def _check_drops_enabled(self, available_drops: list[JsonType]) -> bool:
         return any(
             (
-                (campaign := self._twitch._campaigns.get(campaign_data["id"]))
-                is not None
+                (campaign := self._twitch._campaigns.get(campaign_data["id"])) is not None
                 and campaign.can_earn(self, ignore_channel_status=True)
             )
             for campaign_data in available_drops
         )
 
-    def external_update(
-        self, channel_data: JsonType, available_drops: list[JsonType]
-    ):
+    def external_update(self, channel_data: JsonType, available_drops: list[JsonType]):
         """
         Update stream information based on data provided externally.
 
@@ -398,9 +348,7 @@ class Channel:
 
     async def get_stream(self) -> Stream | None:
         try:
-            response: JsonType = await self._twitch.gql_request(
-                self.stream_gql
-            )
+            response: JsonType = await self._twitch.gql_request(self.stream_gql)
         except MinerException as exc:
             raise MinerException(f"Channel: {self._login}") from exc
         channel_data: JsonType | None = response["data"]["user"]
@@ -414,24 +362,14 @@ class Channel:
         stream = Stream.from_get_stream(self, channel_data)
         if not stream.drops_enabled:
             try:
-                available_drops_campaigns: JsonType = (
-                    await self._twitch.gql_request(
-                        GQL_QUERIES["AvailableDrops"].with_variables(
-                            {"channelID": str(self.id)}
-                        )
-                    )
+                available_drops_campaigns: JsonType = await self._twitch.gql_request(
+                    GQL_QUERIES["AvailableDrops"].with_variables({"channelID": str(self.id)})
                 )
             except MinerException:
-                logger.log(
-                    CALL,
-                    f"AvailableDrops GQL call failed for channel: {self._login}",
-                )
+                logger.log(CALL, f"AvailableDrops GQL call failed for channel: {self._login}")
             else:
                 stream.drops_enabled = self._check_drops_enabled(
-                    available_drops_campaigns["data"]["channel"][
-                        "viewerDropCampaigns"
-                    ]
-                    or []
+                    available_drops_campaigns["data"]["channel"]["viewerDropCampaigns"] or []
                 )
         return stream
 
@@ -490,8 +428,8 @@ class Channel:
         if needs_display:
             self.display()
 
-    # NOTE: This is currently unused.
-    async def _send_watch_playlist(self) -> bool:
+    # async def _send_watch_playlist(self) -> bool:
+    async def send_watch(self) -> bool:
         """
         This performs a HEAD request on the stream's current playlist,
         to simulate watching the stream.
@@ -516,7 +454,7 @@ class Channel:
         # the response may contain some invalid JSON with duplicate double quotes
         # in the value strings: we need to get rid of them by removing the "url" key entirely
         # if no JSON can be found within the response, this is a NOOP
-        available_chunks = re.sub(r'"url": ?".+}",', "", available_chunks)
+        available_chunks = re.sub(r'"url": ?".+}",', '', available_chunks)
         # try to decode the suspected JSON
         try:
             available_json: JsonType = json.loads(available_chunks)
@@ -528,26 +466,23 @@ class Channel:
             if isinstance(available_json, list):
                 available_json = available_json[0]
             if "error" in available_json:
-                logger.error(
-                    f"Send watch error: \"{available_json['error']}\""
-                )
+                logger.error(f"Send watch error: \"{available_json['error']}\"")
             return False
-        # the list contains ~10-13 chunks of the stream at 2s intervals,
-        # pick the last chunk URL available. Ensure it's not the end-of-stream tag,
-        # otherwise use the 2nd to last line.
-        chunks_list: list[str] = available_chunks.strip().split("\n")
-        selected_chunk: str = chunks_list[-1]
-        if selected_chunk == "#EXT-X-ENDLIST":
-            selected_chunk = chunks_list[-2]
-        stream_chunk_url: URLType = URLType(selected_chunk)
-        # sending a HEAD request is enough to advance the drops,
-        # without downloading the actual stream data
-        async with self._twitch.request(
-            "HEAD", stream_chunk_url
-        ) as head_response:
-            return head_response.status == 200
+        # the list contains ~15 chunks of the stream at ~2s intervals
+        chunks_list: list[URLType] = [
+            URLType(chunk)
+            for chunk in available_chunks.strip().split("\n")
+            if chunk.startswith("http")
+        ]
+        for stream_chunk_url in chunks_list:
+            # sending a HEAD request is enough to advance the drops,
+            # without downloading the actual stream data
+            async with self._twitch.request("HEAD", stream_chunk_url) as head_response:
+                if head_response.status != 200:
+                    return False
+        return True
 
-    async def send_watch(self) -> bool:
+    async def _send_watch_spade(self) -> bool:
         if self._stream is None:
             return False
         if self._spade_url is None:
@@ -565,11 +500,7 @@ class Channel:
         if self._stream is None:
             return False
         try:
-            watch_response = await self._twitch.gql_request(
-                self._stream.gql_payload
-            )
-            return (
-                watch_response["data"]["sendSpadeEvents"]["statusCode"] == 204
-            )
+            watch_response = await self._twitch.gql_request(self._stream.gql_payload)
+            return watch_response["data"]["sendSpadeEvents"]["statusCode"] == 204
         except RequestException:
             return False
