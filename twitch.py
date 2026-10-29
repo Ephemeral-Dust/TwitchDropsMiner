@@ -1484,6 +1484,17 @@ class Twitch:
                                     data_dict = data_dict[key]
                                 data_dict[path[-1]] = None
                                 break
+                            elif (
+                                isinstance(error_dict["message"], str)
+                                and error_dict["message"].startswith(
+                                    "Failed to fetch from Subgraph"
+                                )
+                            ):
+                                # transient server-side error from a GQL subgraph,
+                                # e.g. "Failed to fetch from Subgraph 'twitch.graphql.monolith'."
+                                # this is usually temporary - retry until success
+                                force_retry = True
+                                break
                             elif error_dict["message"] in (
                                 "service timeout",
                                 "service unavailable",
